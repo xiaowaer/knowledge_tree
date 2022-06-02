@@ -3,7 +3,7 @@
         "data": {
             "id": "ckb8pan3xbk0",
             "created": 1653725325580,
-            "text": "知识树",
+            "text": "radare2",
             "font-size": 18,
             "expandState": "expand"
         },
@@ -23,29 +23,6 @@
                         "data": {
                             "id": "ckb8vd7imh40",
                             "created": 1653725801352,
-                            "text": "建模理论",
-                            "font-size": 18,
-                            "background": "#92d050",
-                            "expandState": "expand",
-                            "layout": null
-                        },
-                        "children": [
-                            {
-                                "data": {
-                                    "id": "ckdywaeczeg0",
-                                    "created": 1654002342371,
-                                    "text": "think_domain_modeling.md",
-                                    "font-size": 16,
-                                    "priority": 1
-                                },
-                                "children": []
-                            }
-                        ]
-                    },
-                    {
-                        "data": {
-                            "id": "ckb8vd7imh40",
-                            "created": 1653725801352,
                             "text": "建模方法",
                             "font-size": 18,
                             "background": "#92d050",
@@ -53,29 +30,6 @@
                             "layout": null
                         },
                         "children": [
-                            {
-                                "data": {
-                                    "id": "ckb8vd7imh40",
-                                    "created": 1653725801352,
-                                    "text": "软件工程",
-                                    "font-size": 18,
-                                    "background": "#92d050",
-                                    "expandState": "expand",
-                                    "layout": null
-                                },
-                                "children": [
-                                    {
-                                        "data": {
-                                            "id": "ckdywaeczeg0",
-                                            "created": 1654002342371,
-                                            "text": "think_se.md",
-                                            "font-size": 16,
-                                            "priority": null
-                                        },
-                                        "children": []
-                                    }
-                                ]
-                            },
                             {
                                 "data": {
                                     "id": "ckb8vd7imh40",
@@ -111,18 +65,6 @@
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "data": {
-                            "id": "ckb8vd7imh40",
-                            "created": 1653725801352,
-                            "text": "建模实战",
-                            "font-size": 18,
-                            "background": "#92d050",
-                            "expandState": "expand",
-                            "layout": null
-                        },
-                        "children": []
                     }
                 ]
             },

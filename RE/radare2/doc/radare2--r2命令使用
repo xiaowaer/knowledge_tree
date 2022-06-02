@@ -1,0 +1,20 @@
+### A3_Ti4
+#### <span style="color:SlateBlue "> r2命令</span>
++ <h5 style="color: SlateBlue ">r2 命令基础使用</h5>
+
+```
+    r2 ./可执行程序 
+    => 之后屏幕打印出程序入口点 [0x080491e0]> ? #帮助命令
+
+```
+
+#### <span style="color:SlateBlue "> r2中的命令视图 </span>
+
+```
+
+    
+```
+
+
+#### <span style="color:SlateBlue ">3. 怎么学习逆向工程?</span>
+
