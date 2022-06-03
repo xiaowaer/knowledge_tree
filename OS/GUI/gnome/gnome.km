@@ -1,0 +1,25 @@
+{
+    "root": {
+        "data": {
+            "id": "ckb8pan3xbk0",
+            "created": 1653725325580,
+            "text": "Gnome",
+            "font-size": 18,
+            "expandState": "expand"
+        },
+        "children": [
+            {
+                "data": {
+                    "id": "ckgbpgvporc0",
+                    "created": 1654241602274,
+                    "text": "I3.md",
+                    "font-size": 16
+                },
+                "children": []
+            }
+        ]
+    },
+    "template": "right",
+    "theme": "fresh-green-compat",
+    "version": "1.4.43"
+}

@@ -139,14 +139,6 @@
                 "children": [
                     {
                         "data": {
-                            "id": "ckdysdzpf4o0",
-                            "created": 1654002036735,
-                            "text": ""
-                        },
-                        "children": []
-                    },
-                    {
-                        "data": {
                             "id": "ckb8vd7imh40",
                             "created": 1653725801352,
                             "text": "AT&T汇编",
@@ -155,18 +147,7 @@
                             "expandState": "expand",
                             "layout": null
                         },
-                        "children": [
-                            {
-                                "data": {
-                                    "id": "ckdywaeczeg0",
-                                    "created": 1654002342371,
-                                    "text": "think_radare2.md",
-                                    "font-size": 16,
-                                    "priority": null
-                                },
-                                "children": []
-                            }
-                        ]
+                        "children": []
                     }
                 ]
             },
@@ -180,7 +161,32 @@
                     "expandState": "expand",
                     "layout": null
                 },
-                "children": []
+                "children": [
+                    {
+                        "data": {
+                            "id": "ckb8vd7imh40",
+                            "created": 1653725801352,
+                            "text": "GUI",
+                            "font-size": 18,
+                            "background": "#92d050",
+                            "expandState": "expand",
+                            "layout": null
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "ckdywaeczeg0",
+                                    "created": 1654002342371,
+                                    "text": "gnome.km",
+                                    "font-size": 16,
+                                    "priority": null,
+                                    "background": "#00b050"
+                                },
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "data": {
@@ -190,7 +196,11 @@
                     "font-size": 18,
                     "background": "#92d050",
                     "expandState": "expand",
-                    "layout": null
+                    "layout": null,
+                    "layout_right_offset": {
+                        "x": 28,
+                        "y": 226
+                    }
                 },
                 "children": [
                     {
@@ -199,6 +209,67 @@
                             "created": 1654002342371,
                             "text": "my_answer.txt",
                             "font-size": 16
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "ckb8vd7imh40",
+                    "created": 1653725801352,
+                    "text": "中间件软件",
+                    "font-size": 18,
+                    "background": "#92d050",
+                    "expandState": "expand",
+                    "layout": null
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "ckb8vd7imh40",
+                            "created": 1653725801352,
+                            "text": "数据库",
+                            "font-size": 18,
+                            "background": "#92d050",
+                            "expandState": "expand",
+                            "layout": null
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "ckb8vd7imh40",
+                            "created": 1653725801352,
+                            "text": "缓存",
+                            "font-size": 18,
+                            "background": "#92d050",
+                            "expandState": "expand",
+                            "layout": null
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "ckb8vd7imh40",
+                            "created": 1653725801352,
+                            "text": "消息",
+                            "font-size": 18,
+                            "background": "#92d050",
+                            "expandState": "expand",
+                            "layout": null
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "ckb8vd7imh40",
+                            "created": 1653725801352,
+                            "text": "高可用",
+                            "font-size": 18,
+                            "background": "#92d050",
+                            "expandState": "expand",
+                            "layout": null
                         },
                         "children": []
                     }
