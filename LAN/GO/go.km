@@ -3,7 +3,7 @@
         "data": {
             "id": "ckb8pan3xbk0",
             "created": 1653725325580,
-            "text": "Gnome",
+            "text": "GO",
             "font-size": 18,
             "expandState": "expand"
         },
@@ -12,16 +12,7 @@
                 "data": {
                     "id": "ckgbpgvporc0",
                     "created": 1654241602274,
-                    "text": "I3.md",
-                    "font-size": 16
-                },
-                "children": []
-            },
-            {
-                "data": {
-                    "id": "ckgbpgvporc0",
-                    "created": 1654241602274,
-                    "text": "polybar.md",
+                    "text": " ",
                     "font-size": 16
                 },
                 "children": []
