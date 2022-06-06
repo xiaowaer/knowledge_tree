@@ -1,20 +1,32 @@
 # A3_GO语言环境关于IDE的配置 
 
-#### <span style="color:SlateBlue ">GO_vscode_setting</span>
+#### <span style="color:SlateBlue ">GO的包管理</span>
 
-
-#### <span style="color:SlateBlue ">插件:Go for Visual Studio Code</span>
+#### <span style="color:SlateBlue ">初体验</span>
 
 ```
-    1.提供功能 
-         IntelliSense
-         code navigation
-         code editing 
-         diagnostics
-         testing and debugging your programs
+    1. 其他语言的包管理.
+        (平时都是IDE或者工具帮助我们过度了这个file 结构->project的过程 )
+      对比java,java的包管理底层都是统一的jar格式,ruby是gems.
+      java可以用gradle,maven来做包管理,ruby可以用Bundler来打包.
+        这些包管理都是基于约定的.目录格式统一.
+    
+    2.go 的包管理是怎么样子的?
         
 
+    3.仓库,模块,包,源代码之间的关系.
 
+        模块:是包的集合,这个集合内的包将一起被发布,版本化和分发. 
+            特点:
+                模块是可以远程仓库拉取的单位.
+                模块被模块路径标识.
+
+    4.go.mod 文件  
+        记录模块路径
+
+    5.模块路径
+    组成:通常由一个存储库root路径,directory within the repository,
+         and a major version suffix (only for major version 2 or higher).
 
     2.简单安装 
         go install -v honnef.co/go/tools/cmd/staticcheck@latest
@@ -151,6 +163,12 @@
    
 ```
 
+
+#### <span style="color:SlateBlue ">3.怎么配置好我们的staticcheck?</span>
+
+```
+   
+```
 
 #### <span style="color:SlateBlue ">2.V2RAY学习</span>```
 
