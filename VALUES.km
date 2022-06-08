@@ -73,6 +73,87 @@
                                             "priority": null
                                         },
                                         "children": []
+                                    },
+                                    {
+                                        "data": {
+                                            "id": "ckb8vd7imh40",
+                                            "created": 1653725801352,
+                                            "text": "devops",
+                                            "font-size": 18,
+                                            "background": "#92d050",
+                                            "expandState": "expand",
+                                            "layout": null
+                                        },
+                                        "children": [
+                                            {
+                                                "data": {
+                                                    "id": "ckb8vd7imh40",
+                                                    "created": 1653725801352,
+                                                    "text": "1.配置管理",
+                                                    "font-size": 18,
+                                                    "background": "#92d050",
+                                                    "expandState": "expand",
+                                                    "layout": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "data": {
+                                                            "id": "ckkdv7az5e00",
+                                                            "created": 1654653933660,
+                                                            "text": "ansible.md",
+                                                            "font-size": 18,
+                                                            "background": "#76923c"
+                                                        },
+                                                        "children": []
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "data": {
+                                                    "id": "ckb8vd7imh40",
+                                                    "created": 1653725801352,
+                                                    "text": "CI/CD",
+                                                    "font-size": 18,
+                                                    "background": "#92d050",
+                                                    "expandState": "expand",
+                                                    "layout": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "data": {
+                                                            "id": "ckkdv7az5e00",
+                                                            "created": 1654653933660,
+                                                            "text": "GO(drone.md)",
+                                                            "font-size": 18,
+                                                            "background": "#76923c"
+                                                        },
+                                                        "children": []
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "data": {
+                                                    "id": "ckb8vd7imh40",
+                                                    "created": 1653725801352,
+                                                    "text": "BDD->TDD",
+                                                    "font-size": 18,
+                                                    "background": "#92d050",
+                                                    "expandState": "expand",
+                                                    "layout": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "data": {
+                                                            "id": "ckkdv7az5e00",
+                                                            "created": 1654653933660,
+                                                            "text": "GO(ginkgo+gomock)",
+                                                            "font-size": 18
+                                                        },
+                                                        "children": []
+                                                    }
+                                                ]
+                                            }
+                                        ]
                                     }
                                 ]
                             },
