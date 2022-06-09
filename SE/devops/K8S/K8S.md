@@ -1,6 +1,26 @@
 
 ### A3_K8S
 
+加油!办法总比困难多哦!
+#### <span style="color:SlateBlue ">在学习K8S中遇到的问题.</span>
+
+
+####  <H6> <span style="color:SlateBlue ">最基本的问题?</span></H6>
+
+```
+    K8S是什么?
+        软件,他自身是不提供虚拟化能力的,虚拟化能力是又想openstack,kvm,docker基础软件这些来提供.
+    
+
+```
+
+####  <H6> <span style="color:SlateBlue ">资源问题:存储</span></H6>
+
+```
+    分布式存储和本地存储资源的在K8S上不同.
+
+```
+
 #### <span style="color:SlateBlue ">0.Kubernetes中的概念</span>
 
 ```
@@ -96,15 +116,7 @@
             用于筛选Pod的Label Selector
             当Pod副本数量小于预期数量时,用于创建新Pod的Pod模板.
 
-    
-
-
-
-
-
-
-
-
+  
 ```
 #### <span style="color:SlateBlue ">2.为什么用K8S?</span>
 
