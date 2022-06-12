@@ -27,10 +27,15 @@
 
     问题:磁盘空间不足,安装虚拟机的时候不要默认,/tmp会很小,/ 挂载的也很小
     解决方案:
+        
         1.新建一个盘.
         2.lsblk
         3. mkfs.ext4 /dev/sdc
         4. mount 
+
+    2.扩容加磁盘组lvm,
+        fdisk -l
+        fdisk /dev/sdd n p 1 t 1 w
         5. pip3 install torch torchvision torchaudio -i https://mirrors.aliyun.com/pypi/simple/ -v
 
 
