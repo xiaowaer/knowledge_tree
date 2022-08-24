@@ -1,0 +1,111 @@
+# 容器的存储资源
+#   1.PersistenVolumeClaim：
+#       特点：
+#           1.使用PVC作为后端存储,适用与数据持久化。
+#           2.PV的类型可以是block，也可以是文件系统。
+#           3.如果使用文件系统作为PVC，会用img作为虚拟磁盘的格式。
+#
+#               2.PV的类型可以是block，也可以是文件系统。
+#               3.如果使用文件系统作为PVC，会用img作为虚拟磁盘的格式。
+#
+#           ... 其他类型留到我们后续使用k8s的使用在研究吧。
+#         
+#    基本概念：
+#           卷：
+#              一是解决了容器崩溃时的文件丢失问题，
+#              二是容器间共享文件的问题。
+#           
+#           docker中的卷：
+#             docker中的卷的表现形式是一个本机目录或者是其他容器的目录。
+#             docker提供的卷驱动，功能有限。
+#           
+#           k8s中的卷：
+#                   种类丰富，允许一个pod使用同时使用不同类型的卷。
+#                   临时卷和pod的生命周期一样长，持久化卷的生命周期比pod长。
+#                   不管你用什么卷，只要pod没有死掉，卷的数据依旧还在。
+#
+#           卷的本质：
+#                   就是一个容器可以访问的目录。
+#                   但是不同类型的卷，形成目录的方式和内容，以及支持介质。
+#
+#           使用方法：
+#               1.在pod 的配置文件的.spec.volumes 指定要用的卷
+#               2.声明你要把卷挂在到容器的那个位置 .spec.containers[*].volumeMounts
+#               3.容器中的根文件系统也是在卷中做持久化。
+#                 
+#                注意：卷不能挂在卷上，卷不同包含其他卷的硬链接。
+#                       卷挂载是在容器内部的目录上。
+#         Persistent Volumes：
+#             管理存储是和管理计算实例不同的问题，
+#             而持久化卷子系统为管理员和用户提供了一组API--用于抽象如何提供存储设备和消费存储设备。
+#             主要有两个新的api resouces：PersistenVolume和PersistenVolumeClaim.
+#         
+#         A PersistentVolume（ PV） 
+#             它是集群中的存储资源，有admin提供被Storage Class自动调用
+#             它和node都是资源，它们有着不一样的生命周期，api提供了不同存储系统的实现，如NFS，ISCI，ceph等
+#         A PersistentVolumeClaim 
+#             它代表了用户对存储资源的请求，PVCs消费PV资源，
+#             Pods可以指定CPU和内存，Claim指定需要的存储空间大小和磁盘访问的控制权限。
+#             生命周期：静态，动态
+#
+#             动态存储的提供前提：
+#             the cluster administrator needs to 
+#             1.enble the DefaultStorageClass admission controller on the API server.
+#               --enable-admission-plugins
+#
+#         PV 和 PVC 之间的banding关系（动态存储中）：
+#             PV 不一定能满足PVC（僧多肉少），pv和pvc是一对一的映射，
+#             没有获取资源的pvc 处于 未绑定状态，一直等着有足够的资源给它的时候。
+#
+#         Storage Class解决了无需向用户提供卷实现细节的问题。
+  #       
+  #       如何配置一个pod 来对存储设备做持久化卷的请求？
+  #         1.根据你的物理设备来选相关支持的持久化卷类型。
+  #         2.创建一个PVC，它会自动绑定到合适的PV。
+  #         3.创建一个pod来使用PV
+#       
+#         容器可以使用 StorageClasses 来设置动态模式的存储分配
+#
+#     demo1：创建最简单的local PV
+#         
+#         apiVersion: v1
+#          kind: PersistentVolume
+#          metadata:
+#          name: demo1
+#          labels:
+#            type:local
+#        spec:
+#          StorageClassesName:mantual
+#          capacity:
+#            storage: 20Gi
+#          accessModes:
+#            - ReadWriteMany
+#          hostPath:
+#            path: "/share/path/on/server"
+#           
+#         ? StorageClassesName:mantual 是什么意思？
+#         
+#       --有了配置文件之后，就可以创建存储卷了。
+#       kubectl apply -f pv-volume.yaml
+#       --参看卷
+#       kubectl get pv demo1
+#
+#     创建一个PVC 
+#
+#
+#
+#
+#
+#
+#
+#
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+  # 
+

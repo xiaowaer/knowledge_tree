@@ -1,0 +1,73 @@
+  1. yaml技巧
+    1.1  yaml 第一行用三个横线表示，一个文件可以写多个yaml格式
+    1.2  注释是#
+    1.3  统一缩进二个空格
+    1.4  同行多个K-V用逗号隔开
+    1.5  列表
+        --------------------------------
+        # A list of tasty fruits
+        - apple
+        - orange
+        - Strawberry
+        - Mango
+
+        [Apple，Orange，Strawberry，Mango]
+
+        --------------------------------
+    1.6字典
+        --------------------------------
+        #字典通常由多个key与value构成
+        #An employee record
+            name: Example Development
+            job: Developer
+            skill:Elite
+            可以将key：value 放到{ }中进行表示，用，分隔多个key:value
+
+        #An employee record
+            { name:"Example",job："Developer"，skill："Aug "}
+        --------------------------------
+
+
+2. playbook的简单说明：
+    2.1 playbook是一个play列表，play至少包含一个name和task(一个name对应一个task)
+
+3.playbook demo:
+    3.1
+
+
+    4. Playbook中使用的handlers和notify
+     Handlers本质是task list,类似MYSQL中的触发器的行为，其中的task与前述的task并没有本质上的不同，
+     主要用于当关注的资源发生变化的时候，才采取的操作。而notify是被触发的一次幂等操作。
+
+     demo:
+        配置文件修改后，重启服务
+      tag,给动作写个标签，就可以只选择特定的标签执行的。
+      
+
+    5.playbook中使用变量
+        变量名：只能由字母、数字和下划线组成，且只能以字母开头。
+        变量定义：variable=value
+        变量调用方式:{{variable_name}}调用变量，且变量名前后建议加空格，有时用"{{variable_name}}"才生效.
+        变量来源: 
+            5.1.怎么得到变量？ 
+                5.1.1 ansible 的setup facts 远程主机的所有变量都可直接调用
+                5.1.2 通过命令行指定变量,优先级最高
+                    ansible-playbook -e varname=value
+                5.1.3 在playbook 文件中定义
+                    vars:
+                      -var1: value1
+                      -var2: value2
+                5.1.4 在独立的变量YAML文件中定义:
+                    vars_files: 
+                        - vars.yml --文件放在什么目录下? playbook 同路径？可以绝对路径。
+                
+                5.1.5 也可以通过在主机清单对不同的主机配置变量
+            
+
+
+                            
+
+
+
+
+

@@ -1,0 +1,25 @@
+--- 哈哈哈，cnm的ansible，2022/8/18
+    ansible-playbook -- 网络下载ansible role
+
+    1.ansible 的role放在什么位置？where )
+    
+    本质：多个ansible playbook 按照特定项目格式，组成一个模块一样的项目
+    ./ansible/roles/geerlingguy.mysql 
+         每个目录存放了不同的文件：
+         task/
+            configure.yml
+            databases.yml
+            main.yml
+            replication.yml
+            ...
+        templates
+            my.conf
+            ...
+        vars/
+            Archlinux.yml
+            Debian-10.yml
+            Debian.yml
+            Debian-8.yml
+
+    -------------------------------
+    

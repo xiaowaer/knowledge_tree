@@ -1,0 +1,194 @@
+常见的ansible 模块
+   参考地址：https://docs.ansible.com/ansible/2.9/modules/modules_by_category.html
+    
+    1.command & shell
+    command模块和shell模块对比，shell更好，shell支持管道，重定向。
+        所以我们可以修改 
+        vim /etc/ansible/ansible.cfg
+        module_name = shell ，那么默认命令就是shell了。
+        --shell 很好，但是不是万能的。
+    
+    2.Script 模块
+        使用场景：在远程主机上运行ansible服务器上的脚本
+        ansible xx_hosts -m script -a '/data/ansible.sh'
+
+    3.Copy 模块
+        使用场景： 从ansible服务器主控端复制到远程主机
+        # 如目标存在，默认覆盖，此处指定先备份
+        ansible xx_hosts -m copy -a 'src=/root/test1.sh dest=/tmp/test2.sh owner=wang mode=600 backup=yes'
+        #指定内容，直接生成目标文件
+        ansible xx_hosts -m copy -a "content='test content\n' dest=/tmp/test.txt"
+        #复制/etc/下的文件，不包括/etc/目录自身
+        ansible xx_hosts -m copy -a "src=/etc dest=/backup"
+    
+    4.Fetch 模块 
+        使用场景： 从远程主机提取文件到ansible的主控端，与copy相反，不支持目录提取。
+        ansible xx_hosts -m fetch -a 'src=/root/test.sh dest=/data/script'
+        dest 是主控端的目录 --可以抓日志
+
+    5.File模块
+       使用场景：设置文件属性
+       
+       #创建空文件
+        ansible xx_hosts -m file -a 'path=/data/test.txt state=touch'
+        ansible xx_hosts -m file -a 'path=/data/test.txt state=absent'
+        ansible xx_hosts -m file -a 'path=/data/test.sh owner=ljj mode=755'
+            
+       #创建目录
+       ansible xx_hosts -m file -a "path=/data/mysql state=directory owner=mysql group=mysql"
+
+       #创建软链接
+       ansible xx_hosts -m file -a 'src=/data/testfile dest=/data/testfile-link state=link'
+
+        state 说明：
+            absent 目录将递归被删除，文件和符号被取消。
+            touch 如果文件不存在就创建
+            directory 递归修改
+            link 软链接
+
+    6. unarchive模块
+        使用场景：
+            1.将ansible主机上的压缩包传到远程主机后解压缩至特定目录，设置copy=yes
+            2.将远程主机上的某个压缩包解压到指定路径下，设置copy=no
+                默认从ansible 找包到远程解压
+            ansible xx_hosts -m unarchive -a 'src=/data/foo.tgz dest=var/lib/foo'
+                远程本地解压,mode 是解压后的文件权限
+            ansible xx_hosts -m unarchive -a 'src=/tmp/foo.zip dest=/data copy=no mode=777'
+    
+    7.Archive 模块
+        ansible xx_hosts -m archive -a  'path=/var/log dest=/data/log.tar.bz2 format=bz2 '
+    
+    8.Hostname 模块
+    ansible 192.168.1.2 -m hostname -a 'xx'
+
+    9.Cron 模块
+     功能：计划任务
+     支持时间：minute，hour,day,month,weekday
+     -----------------------------------------------------
+        #cat mysql_backup.sh
+    mysqldump -A -F --single-transaction --master-data=2 -q -uroot |gzip > /data/mysql_date+%F_%T .sql.gz
+        #创建任务
+        ansible 10.0.0.8 -m cron -a  'hour=2  minute=30 weekday 1-5 
+        name=""backup mysql  job=/root/mysql_backup.sh'
+        ansible 10.0.0.8 -m cron -a  "minute="/5 job='/usr/sbin/ntpdate 172.20.0.1 &>/dev/null' name=Synctime"
+        #禁用计划任务
+        ansible xx_hosts -m cron -a "minute=/5 job='/usr/sbin/ntpdate 172.20.0.1 &> /dev/null' name=Synctime disabled=yes"
+        #启动计划任务
+        ansible xx_hosts -m cron -a "minute=/5 job='/usr/sbin/ntpdate 172.20.0.1 &> /dev/null' name=Synctime disabled=no"
+        #查看定时任务
+        ansible xx_hosts -a 'crontab -l'
+        -- cat /var/spool/cron/root
+        #删除定时任务
+        ansible dbsrvs -m cron -a 'name="backup mysql" state = absent'
+
+    10.Yum 模块
+       使用场景： 管理软件包
+       #安装
+       ansible xx_hosts -m yum -a 'name=httpd '
+       #卸载
+       ansible xx_hosts -m yum -a 'name=httpd state-absent'
+
+    11.service 模块
+        使用场景：管理服务
+        #服务启动
+        ansible  all -m service -a "name=httpd state=started"
+        #关闭服务
+        ansible  all -m service -a "name=httpd state=stop"
+        #开机自启动
+        ansible  all -m service -a "name=httpd enable-yes"
+        #重新加载
+        ansible  all -m service -a "name=httpd state=reload"
+        #重新启动
+        ansible  all -m service -a "name=httpd state=restart"
+
+    12. User 模块
+        功能：管理用户
+        #创建用户
+        ansible xx_hosts -m user -a 'name=user1 comment="test user" uid=2048 home=/app/user1 group=root'
+        ansible xx_hosts -m user -a 'name=nginx uid=88 group=nginx groups ="root，daemon" shell=/sbin/nologin 
+        system=yes create_home=no home=/data/nginx non_unique=yes'
+        
+        #删除用户及家目录等数据
+        ansible xx_hosts -m user -a 'name=nginx state=absent remove=yes'、
+
+    13.Group 模块
+        功能：创建分组
+        #创建组
+        ansible xx_hosts -m group -a "name =nginx gid=88 system=yes"
+        删除组
+        ansible xx_hosts -m group -a 'name=nginx state=absent'
+
+    14.Lineinfile 模块
+        功能：文本替换 代替sed命令
+        例子
+         行替代：
+        ansible all -m lineinfile -a 'path=/etc/selinux/config regexp='^SELINUX=' line='SELINUX=enforcing'"
+         删除所有注解：
+         ansible all -m lineinfile -a 'dest=/etc/fstab state=absent regexp="^#"'
+    
+    15.replace 模块
+        demo： uuid 开头的行加注释
+        absible all -m replace -a "path=/etc/fstab regexp '^(UUID.*) ' replace='#\1'"
+        
+    16.Setup 模块
+        功能：setup 模块来收集主机的系统信息，这些facts信息直接以变量的形式使用，但是如果主机较多，会影响执行速度，
+        可以使用gather_facts：no 来禁止ansible 收集facts消息
+        demo:
+            ansible xx_hosts -m setup
+            ansible xx_hosts -m setup -a "filter=ansible_nodename"
+            ansible xx_hosts -m setup -a "filter=ansible_hostname"
+            ansible xx_hosts -m setup -a "filter=ansible_domain"
+            ansible xx_hosts -m setup -a "filter=ansible_memtotal_mb"
+            ansible xx_hosts -m setup -a "filter=ansible_memory_mb"
+            ansible xx_hosts -m setup -a "filter=ansible_memory_free"
+            ansible xx_hosts -m setup -a "filter=ansible_os_family"
+          #操作系统版本号
+          ansible xx_hosts -m setup -a "filter=ansible_distribution_major_version"
+            ansible xx_hosts -m setup -a "filter=ansible_distribution_version"
+            ansible xx_hosts -m setup -a "filter=ansible_processor_vcpus"
+            ansible xx_hosts -m setup -a "filter=ansible_all_ipv4_addresses"
+            ansible xx_hosts -m setup -a "filter=ansible_architecture"
+            ansible xx_hosts -m setup -a "filter=ansible_processor*"
+            ansible xx_hosts -m setup -a "filter=ansible_"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+        
+
+     -----------------------------------------------------
+
+
+
+
+
+
+
