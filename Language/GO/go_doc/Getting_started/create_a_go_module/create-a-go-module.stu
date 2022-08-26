@@ -1,0 +1,66 @@
+目标:
+    创建模块：
+        1.创建一个库模块，用于由其他库或应用导入
+        2.创建调用方程序，它将使用我们第一个创建的库模块。
+            注意：作为应用程序执行的代码必须在一个主包中。
+
+
+    demo 简述:
+        1.创建模块 
+           mkdir greetings
+           cd greetings
+           go mod init example.com/greetings
+           go.mod 文件就是用来跟踪代码的依赖项
+           go.sum 是校验和，确保依赖没有被篡改
+        
+        -----------------------------------------------
+        创建 greetings.go文件
+            声明一个greetings包来收集相关功能。
+            --Declare a greetings package to collect related functions
+            Implement a hello function to return the greeting
+            注意！注意！注意！ 在GO语言中，函数名大写字母开头可以被不同的包中的函数调用。
+            :=操作符 用于声明并赋值给初始化变量
+            message:=fmt.Sprintf("Hi, %v. Welcome!", name)
+            等价于
+            var message string
+            message = fmt.Sprintf("Hi, %v. Welcome!", name)
+            package greetings
+            import "fmt"
+
+            // Hello returns a greeting for the named person.
+            func Hello(name string) string {
+            // Return a greeting that embeds the name in a message.
+            message := fmt.Sprintf("Hi, %v. Welcome!", name)
+            return message
+            }
+            func funcname (paraname string ) string
+        -----------------------------------------------
+
+
+        2.从另一个模块调用代码，导入并使用新的模块。
+            多创建一个模块，hello
+            -----------------------------------
+            cd ..
+            mkdir hello
+            cd hello
+
+             go mod init example.com/hello
+            package main
+           import ("fmt"
+           "example.com/greetings"
+            )
+        func main() {
+        // Get a greeting message and print it.
+        message := greetings.Hello("Gladys")
+        fmt.Println(message)
+        }
+        配置代码导航：
+        安装godef，配置好环境变量，配置vim插件。
+            -----------------------------------
+        3.返回并处理错误
+        4.返回一个随机问候语--Handle data in slices(GO的动态数组)
+        5.返回对多人的问候 --Store key/value pairs in a map
+        6.ADD a test --Use Go's built-in unit testing features to test your code 
+        7. Compile and install the application --Compile and install your code locally
+
+          

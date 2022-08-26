@@ -1,0 +1,101 @@
+    0.go中的一些逻辑概念：
+
+    ---------------package---------------
+        Go代码被分组到包中，包被分组到模块中。
+        .mod(setting.xml 差不多 指定了go版本，和模块依赖的其他模块。)
+
+        0.1 package 包 
+            什么是包？
+                它是用于组织函数的单位，说白了就是一堆函数构成一个包。
+                它对应的级别是目录，包对应是同一个目录下的文件。
+
+            包包含了什么操作? 
+                导入包 import ，说白了就是导入目录
+                -- import "fmt" 内部目录，肯定有默认的本地查找路径。
+             gopath 可以通过go env 来查看，默认会从两个目录来查看项目路径
+                goroot和gopath
+                如何修改gopath? 
+    ---------------package---------------
+            
+
+    ---------------module---------------
+    0.2 模块
+        0.2.1 模块是什么? 
+                对应的是业务单位。
+                包含一个或者多个包(目录)。
+                例如:财务分析功能模块。
+
+        0.2.2 模块命令的使用? 
+            go mod 命令:
+            几个常用的选项:
+                go mod init moduleName (在当前目录下初始化创建一个新的模块)
+                go mod download  (下载模块到本地缓存)
+                go mod tidy (删除掉没用的模块)
+                go mod verify (检查依赖准备好没有)
+
+
+    ---------------module---------------
+
+
+    ---------------functions---------------
+     go 函数写法: 
+        func funcname （ paraname type ）return type
+
+
+    ---------------functions---------------
+    
+    
+    ---------------error-Handle---------------
+    go 中的异常处理: 
+        多返回值:
+          常见写法: 
+         package greetings
+         
+         import (
+             "errors"
+             "fmt"
+         )
+         
+         // Hello returns a greeting for the named person.
+         func Hello(name string) (string, error) {
+             // If no name was given, return an error with a message.
+             if name == "" {
+                 return "", errors.New("empty name")
+             }
+         
+             // If a name was received, return a value that embeds the name
+             // in a greeting message.
+             message := fmt.Sprintf("Hi, %v. Welcome!", name)
+             return message, nil
+         }
+
+
+
+
+    ---------------error-Handle---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    1.怎么编译运行go语言的代码？
+
+    2.怎么调试go语言的代码?
+    
+    3.怎么创建一个go语言的项目?
+

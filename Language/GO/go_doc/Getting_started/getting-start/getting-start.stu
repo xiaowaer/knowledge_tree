@@ -1,0 +1,23 @@
+目标:一个简短的 Hello，World 入门教程。学习一点 Go 代码，工具，包和模块。
+教程概述:
+    1.安装go
+    2.写一个简单的helloworld代码
+        ------------
+        mkdir hello
+        cd hello
+        go mod init example/hello
+        cat >>hello.go<<-eof
+        package main
+        import "fmt"
+    func main() {
+    fmt.Println("Hello, World!")
+     } 
+     eof
+        --------------
+    3.使用go命令运行代码
+        go run .
+    4. 使用go package discovery tool to find packages
+    you can use in your own code 
+    5. 调用外部模块的函数
+
+

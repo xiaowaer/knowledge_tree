@@ -1,0 +1,9 @@
+    怎么在vim 中实现GO代码跳转?
+        通过学习https://go.dev/doc/tutorial/call-module-code
+        明白了怎么实现跨模块调用，但是我们缺少一个模块跳转到对应文件的快捷方式。
+
+    跳转是通过godef实现，godef安装目录一般是$GOBIN
+    go install -v github.com/rogpeppe/godef
+    ~/.vimrc配置，用plugininstall安装插件
+    Plug 'dgryski/vim-godef'
+
