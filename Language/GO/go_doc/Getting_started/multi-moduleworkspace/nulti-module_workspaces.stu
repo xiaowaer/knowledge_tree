@@ -1,0 +1,21 @@
+目标:学习多模块工作区
+    解决问题:如何同时在多个模块中编写代码??
+
+    demo: 
+        1.切换到主目录
+        2.创建workspace目录
+        3.初始化模块 initialize module
+            ----------------------------
+               mkdir hello
+               cd hello
+               go mod init example.com/hello
+               go get golang.org/x/example ?
+
+            ----------------------------
+
+        创建go workspace的好处是什么?
+            减低代码联调的复杂度,在没有go workspaces之前,
+            第三方模块需要修改的化需要 在go.mod使用replace这样的表达
+            来测试本地修改后的代码
+
+        go work命令使用

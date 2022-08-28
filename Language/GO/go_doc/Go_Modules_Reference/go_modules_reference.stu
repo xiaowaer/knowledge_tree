@@ -1,0 +1,69 @@
+    参考文档:
+    https://go.dev/ref/mod#module-path (粗略的看啦一下,符合28定律,用到啦再查)
+    如何编写Go代码模块,使用模块,以模块为单位来迁移项目?
+    常见用法:
+        go list -m -u checks for information on all deprecated modules
+        检查被废弃的模块,go list 可以查看到go build list
+
+
+
+    1.Introduction 简介
+        模块是GO管理代码依赖的方式
+        基本概念:
+            module
+            什么是模块? 
+                模块是一个packages的集合,这些packages是将要一起以同一个版本号发行的.
+            怎么获得模块?
+                go模块可以直接从代码仓库(版本控制存储库)或者模块代理服务器获得.
+            moudle path:
+                是module的标识,被记录在go.mod中
+                module path 描述了一个模块大概是用来干什么的,和这个模块在哪里
+                组成:
+                    包含:存储库根路径 主版本号
+                    repository root path:
+                    major version suffix:
+            
+            go.mod files
+                A module is defined by a UTF-8 encoded text file named go.mod in its root directory.
+                在module的root目录下的文本文件
+                The go.mod file is line-oriented.
+                Each line holds a single directive, made up of a keyword followed by arguments.  
+                每一行包含一个单独的命令
+                
+                require 需要导入的模块
+                replace 需要被替换的模块
+                go get 下载模块 现在多用 go install 
+
+                Mod 文件最多只能包含一个 go 指令。如果当前 Go 版本中没有，大多数命令都会添加一个 Go 指令。
+                go 1.14
+
+            (Lexical element)词法元素:
+                    空格,注释,标点符号,关键字,标识符和字符串
+                
+            注释://
+            标点符号: (、)和 = >
+            关键字: module, go, require, replace, exclude, and retract
+            
+            (Grammer 语法)
+                GoMod = { Directive } .
+                Directive = ModuleDirective |
+                    GoDirective |
+                    RequireDirective |
+                    ExcludeDirective |
+                    ReplaceDirective |
+                    RetractDirective .
+        
+        GoDirective      go版本
+        ModuleDirective  本模块名称
+        RequireDirective 本模块需要那个模块
+        exclude directive 排除指令,可以防止go 命令加载某个模块
+        replace directive  替换成特定模块
+        retract directive  撤回指令 --实际用处也不是很大
+
+
+
+            package:
+                如何在module中找到包?
+                    
+
+            version
