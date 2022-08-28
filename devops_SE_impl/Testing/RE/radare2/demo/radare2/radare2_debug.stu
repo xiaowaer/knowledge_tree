@@ -1,0 +1,31 @@
+   demo:
+   ----------------
+    1.pidof xxx 
+     //查看进程号
+
+    2.开始调试
+     2.1 命令行打开r2 调式模式
+        r2 -d pid
+        $ r2 -d /bin/ls
+        $ r2 -a arm -b 16 -d gdb://192.168.1.43:9090
+        
+     2.2 原理:
+        debugger 会fork一个用于调试的进程,我们称为 xxx.fork
+        xxx.fork 将stop在 ld.so动态链接库前,这个时候我们还没到函数入口
+         --我们怎么进入下一步,即打开函数入口
+          我们可以通过 (debug continue until) dcu main 命令
+          但是不是每个程序都有main 入口点
+
+    2.3 debbuger模式的常见命令:
+        d? ;  get help on debugger commands
+        ds 3 ; step 3 times 单步三下
+        db 0x8048920; 在地址0x8048920 打一个断点
+        db -0x8048920;在地址0x8048920处取消断点
+        dc; 继续执行
+        dcs;执行直到碰到系统调用
+        dd; 控制文件描述符
+        dm; show process map
+        dmp A S rwx ;change permissions of page at A and size S
+        dr eax=33 ;set register value.eax=33
+
+

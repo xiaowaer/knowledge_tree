@@ -1,0 +1,11 @@
+    radare2 使用表达式
+    支持的运算符号:
+        +:addition
+        -:subtraction
+        *:multiplication
+        /:division
+        %:modulus
+        >:shift right
+        <:shift left
+
+    

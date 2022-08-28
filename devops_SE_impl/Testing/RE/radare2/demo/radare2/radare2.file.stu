@@ -1,0 +1,19 @@
+   radare2 related files
+        r2 -H 命令可以列出所有重要的环境变量,
+        并且了解R2在哪些路径下搜索需要的文件
+            默认配置:
+                 ------------------------
+                 R2_PREFIX=/usr
+                MAGICPATH=/usr/share/radare2/2.8.0-git/magic
+                PREFIX=/usr
+                INCDIR=/usr/include/libr
+                ILIBDIR=/usr/lib64
+                 LIBEXT=so RCONFIGHOME=/home/user/.config/radare2
+                 RDATAHOME=/home/user/.local/share/radare2
+                RCACHEHOME=/home/user/.cache/radare2
+                LIBR_PLUGINS=/usr/lib/radare2/2.8.0-git
+                USER_PLUGINS=/home/user/.local/share/radare2/plugins
+                USER_ZIGNS=/home/user/.local/share/radare2/zigns
+                 -------------------------
+
+
