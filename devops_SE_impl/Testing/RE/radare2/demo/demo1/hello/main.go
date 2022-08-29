@@ -20,7 +20,7 @@ import (
   func main() {
       router := httprouter.New()
       router.GET("/", Index)
-      router.GET("/hello/:name", Hello)
+      router.GET("/hello/:namb", Hello)
       fmt.Printf("aaa")
 //
       log.Fatal(http.ListenAndServe(":8080", router))

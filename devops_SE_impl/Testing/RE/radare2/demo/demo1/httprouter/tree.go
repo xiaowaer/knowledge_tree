@@ -10,6 +10,8 @@ import (
 	"unicode/utf8"
 )
 
+// 对比两个数,小的返回
+
 func min(a, b int) int {
 	if a <= b {
 		return a
@@ -17,6 +19,7 @@ func min(a, b int) int {
 	return b
 }
 
+// 找到最长的公共前缀 
 func longestCommonPrefix(a, b string) int {
 	i := 0
 	max := min(len(a), len(b))
@@ -26,6 +29,7 @@ func longestCommonPrefix(a, b string) int {
 	return i
 }
 
+// 查找通配符号
 // Search for a wildcard segment and check the name for invalid characters.
 // Returns -1 as index, if no wildcard was found.
 func findWildcard(path string) (wilcard string, i int, valid bool) {
@@ -51,6 +55,7 @@ func findWildcard(path string) (wilcard string, i int, valid bool) {
 	return "", -1, false
 }
 
+// 计算: 和 *的数量
 func countParams(path string) uint16 {
 	var n uint
 	for i := range []byte(path) {
@@ -62,58 +67,83 @@ func countParams(path string) uint16 {
 	return uint16(n)
 }
 
+//最多255个值 
 type nodeType uint8
-
+//枚举 实现 
 const (
 	static nodeType = iota // default
-	root
-	param
-	catchAll
+	root  // value --> 1 
+	param // value --> 2 
+	catchAll // value --> 3
 )
+//定义node结构
 
 type node struct {
 	path      string
+    //路径命
 	indices   string
+    //最短的下一个匹配 
 	wildChild bool
+    //是否拥有带通配符的儿子节点 
 	nType     nodeType
+    //节点类型 (可选:static,root,param.catch)
 	priority  uint32
+    //权重 这个路径下面还有多少个路径节点
 	children  []*node
+    //儿子节点,多叉树
 	handle    Handle
+    //要匹配执行的handler函数 
 }
 
 // Increments priority of the given child and reorders if necessary
+//调整顺序和提高权重
 func (n *node) incrementChildPrio(pos int) int {
+
 	cs := n.children
+
 	cs[pos].priority++
+
 	prio := cs[pos].priority
 
 	// Adjust position (move to front)
 	newPos := pos
+
 	for ; newPos > 0 && cs[newPos-1].priority < prio; newPos-- {
 		// Swap node positions
 		cs[newPos-1], cs[newPos] = cs[newPos], cs[newPos-1]
 	}
 
 	// Build new index char string
-	if newPos != pos {
+	if newPos != pos { 
+
 		n.indices = n.indices[:newPos] + // Unchanged prefix, might be empty
+
 			n.indices[pos:pos+1] + // The index char we move
+
 			n.indices[newPos:pos] + n.indices[pos+1:] // Rest without char at 'pos'
 	}
 
 	return newPos
 }
 
+
 // addRoute adds a node with the given handle to the path.
-// Not concurrency-safe!
+// 添加节点
+// Not concurrency-safe! 非并发安全
+// 方法,方法只能被node*类型的结构调用,是一个比package 更小的可视单位.
 func (n *node) addRoute(path string, handle Handle) {
-	fullPath := path
+	//变量赋值
+    fullPath := path
+    //权重加一
 	n.priority++
 
-	// Empty tree
+	// Empty tree  加入头节点 
 	if n.path == "" && n.indices == "" {
+        //插入孩子节点 
 		n.insertChild(path, fullPath, handle)
-		n.nType = root
+		//设置节点类型 
+        n.nType = root
+        //返回 
 		return
 	}
 
@@ -214,6 +244,7 @@ walk:
 	}
 }
 
+//插入孩子
 func (n *node) insertChild(path, fullPath string, handle Handle) {
 	for {
 		// Find prefix until first wildcard
@@ -317,6 +348,7 @@ func (n *node) insertChild(path, fullPath string, handle Handle) {
 	n.path = path
 	n.handle = handle
 }
+
 
 // Returns the handle registered with the given path (key). The values of
 // wildcards are saved to a map.
@@ -462,6 +494,7 @@ walk: // Outer loop for walking the tree
 	}
 }
 
+
 // Makes a case-insensitive lookup of the given path and tries to find a handler.
 // It can optionally also fix trailing slashes.
 // It returns the case-corrected path and a bool indicating whether the lookup
@@ -485,6 +518,7 @@ func (n *node) findCaseInsensitivePath(path string, fixTrailingSlash bool) (fixe
 
 	return string(ciPath), ciPath != nil
 }
+
 
 // Shift bytes in array by n bytes left
 func shiftNRuneBytes(rb [4]byte, n int) [4]byte {

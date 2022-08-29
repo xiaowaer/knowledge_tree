@@ -1,0 +1,147 @@
+    go 语言异常处理:
+        1.通过返回值来处理异常,没有异常就返回nil
+        2.主动返回异常,把异常处理的逻辑放在if 语句中.
+        demo:
+            常见异常处理方式:
+            func Demo() (int, error)
+                _,err := errorDemo()
+                if err!=nil{
+                  fmt.Println(err)
+                  return }
+
+          自定义异常:
+                func divisionInt(a, b int) (int, error) {
+             if b == 0 {
+              return -1, errors.New("除数不能为0")
+            }
+            return a / b, nil
+            }
+
+            a, b := 4, 0
+            res, err := divisionInt(a, b)
+            if err != nil {
+             fmt.Println(err.Error())
+             return
+            }
+            fmt.Println(a, "除以", b, "的结果是 ", res)
+            err = fmt.Errorf("产生了一个 %v 异常", "喝太多")
+
+            ------------------------------------------------
+            常见的异常处理:
+                type error interface{
+                    Error() string
+                }
+
+                type errorString struct{
+                    s String
+                }
+                func(e *errorString) Error() string{
+                    return e.s 
+                }
+                //多一个函数当作构造函数
+                func New(text string) error{
+                  return &errorString{text} 
+                }
+
+                type FileError struct {
+                Op   string
+                 Name string
+                 Path string
+                } 
+                //文件错误结构
+
+                // 初始化函数
+                func NewFileError(op string, name string, path string) *FileError {
+                 return &FileError{Op: op, Name: name, Path: path}
+                }
+                // 实现接口
+                func (f *FileError) Error() string {
+                 return fmt.Sprintf("路径为 %v 的文件 %v，在 %v 操作时出错", f.Path, f.Name, f.Op)
+                }
+                f := NewFileError("读", "README.md", "/home/how_to_code/README.md")
+                fmt.Println(f.Error())
+            ------------------------------------------------
+
+            ------------------------------------------------
+            高级用法:
+              defer:
+                defer Go中有一种延迟调用语句叫defer语句,它在函数返回时才会调用,
+                如果有多个defer语句 那么它会被逆序执行.
+
+                defer fmt.Println("see you next time!")
+                defer fmt.Println("close all connect")
+                fmt.Println("hei boy")
+
+                hei boy
+                close all connect
+                see you next time!
+                //作用:就算是程序崩溃,也依然打印结果
+                //通常会用来执行一些告别操作,比如关闭连接,释放资源等操作.
+                //场景:
+                    1.并发时释放共享资源锁
+                    2.延迟释放文件句柄
+                    3.延迟关闭tcp连接
+                    4.延迟关闭数据库连接
+                
+              panic:
+                error是编译异常.
+                panic是运行时异常,如数组下标越界,空指针异常,程序直接崩溃退出.
+                :缺少库是panic
+                    defer fmt.Println("关闭文件句柄")
+                    panic("人工创建的运行时异常")
+                
+                panic recover:
+                    出现panic以后程序会终止运行,
+                    但是不能直接崩溃,应该打印异常日志,关闭资源,跳过异常,继续向下运行
+                    然后再借助运维监控系统对日志的监控，发送告警给运维、开发人员，进行紧急修复。
+                    
+                    func divisionIntRecover(a, b int) (ret int) {
+                     defer func() {
+                      if err := recover(); err != nil {
+                       // 打印异常，关闭资源，退出此函数
+                       fmt.Println(err)
+                       ret = -1
+                      }
+                     }()
+                    
+                     return a / b
+                    }
+
+                    var res int
+                    datas := []struct {
+                     a int
+                     b int
+                    }{
+                     {2, 0},
+                     {2, 2},
+                    }
+
+                    for _, v := range datas {
+                     if res = divisionIntRecover(v.a, v.b); res == -1 {
+                      continue
+                     }
+                     fmt.Println(v.a, "/", v.b, "计算结果为：", res)
+                    }
+
+----------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ------------------------------------------------

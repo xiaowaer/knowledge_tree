@@ -13,36 +13,48 @@ import (
 	"testing"
 )
 
-// func printChildren(n *node, prefix string) {
-// 	fmt.Printf(" %02d %s%s[%d] %v %t %d \r\n", n.priority, prefix, n.path, len(n.children), n.handle, n.wildChild, n.nType)
-// 	for l := len(n.path); l > 0; l-- {
-// 		prefix += " "
-// 	}
-// 	for _, child := range n.children {
-// 		printChildren(child, prefix)
-// 	}
-// }
+//打印儿子节点
+ func printChildren(n *node, prefix string) {
+     // 打印,权重(这个节点下面有多少个节点,),前缀,节点路径,多少个儿子,它的handle函数,是否包含通配符儿子,Type类型
+ 	fmt.Printf(" %02d %s%s[%d] %v %t %d \r\n", n.priority, prefix, n.path, len(n.children), n.handle, n.wildChild, n.nType)
+ 	// 
+    for l := len(n.path); l > 0; l-- {
+ 		prefix += " "
+ 	}
+    //遍历打印儿子节点数据信息
+ 	for _, child := range n.children {
+ 		printChildren(child, prefix)
+ 	}
+ }
 
 // Used as a workaround since we can't compare functions or their addresses
+// 虚假handler 方法,只是一种mock思想. 
 var fakeHandlerValue string
-
 func fakeHandler(val string) Handle {
 	return func(http.ResponseWriter, *http.Request, Params) {
 		fakeHandlerValue = val
 	}
 }
 
+//定义一个测试请求的结构体
 type testRequests []struct {
 	path       string
+    //路径命
 	nilHandler bool
+    // 是否空处理 
 	route      string
+    //路由 
 	ps         Params
+    //参数
 }
 
+//获得参数
 func getParams() *Params {
 	ps := make(Params, 0, 20)
 	return &ps
 }
+
+//检查请求???????????????????????????????????????????????????????
 
 func checkRequests(t *testing.T, tree *node, requests testRequests) {
 	for _, request := range requests {
@@ -73,26 +85,34 @@ func checkRequests(t *testing.T, tree *node, requests testRequests) {
 	}
 }
 
+
+
+
+
+//检查权重(儿子+自己的总节点数量)
 func checkPriorities(t *testing.T, n *node) uint32 {
+    //定义一个实际变量 ,32位无符号int,4Byte
 	var prio uint32
+    //递归求和 
 	for i := range n.children {
 		prio += checkPriorities(t, n.children[i])
 	}
-
+    //节点的handle 非 空 prio+1
 	if n.handle != nil {
 		prio++
 	}
-
+    // 事实值和计算值不符合 ,我们想到的情况是有节点没有handle导致的错误.
 	if n.priority != prio {
 		t.Errorf(
 			"priority mismatch for node '%s': is %d, should be %d",
 			n.path, n.priority, prio,
 		)
 	}
-
+    //返回局部计算值  
 	return prio
-}
+} 
 
+// 计算通配符数量 
 func TestCountParams(t *testing.T) {
 	if countParams("/path/:param1/static/*catch-all") != 2 {
 		t.Fail()
@@ -103,7 +123,20 @@ func TestCountParams(t *testing.T) {
 }
 
 func TestTreeAddAndGet(t *testing.T) {
-	tree := &node{}
+
+// *example/httprouter.node {
+//     path: "",
+//     indices: "",
+//     wildChild: false,
+//     nType: static (0),
+//     priority: 0,
+//     children: []*example/httprouter.node len: 0, cap: 0, nil,
+//     handle: nil,}
+//     ])""""
+//}  默认值
+
+    tree := &node{}
+// routes 是一个字符串切片
 
 	routes := [...]string{
 		"/hi",
@@ -118,12 +151,76 @@ func TestTreeAddAndGet(t *testing.T) {
 		"/α",
 		"/β",
 	}
+    // 遍历一个字符串切片,不提取索引,循环加入到树中.
+
 	for _, route := range routes {
+        //路由分片取出值,和假handler方法(mock) 加入到树中.
 		tree.addRoute(route, fakeHandler(route))
+
 	}
+//查看一下,加入到树之后,树的样子是怎么样,这里的prefix打出来都是""
+	printChildren(tree, "")
 
-	// printChildren(tree, "")
+// 测试用例的二层树概览
 
+//     []*example/httprouter.node len: 5, cap: 8, [
+//     *{
+
+//         path: "c",
+//         indices: "o",
+//         wildChild: false,
+//         nType: static (0),
+//         priority: 3,
+//         children: []*example/httprouter.node len: 1, cap: 1, [
+//         *(*"example/httprouter.node")(0xc0000cceb0),
+//         ],
+//         handle: example/httprouter.fakeHandler.func1,},
+//     *{
+
+//         path: "doc/",
+//         indices: "g",
+//         wildChild: false,
+//         nType: static (0),
+//         priority: 3,
+//         children: []*example/httprouter.node len: 1, cap: 1, [
+//         *(*"example/httprouter.node")(0xc0000ccff0),
+//         ],
+//         handle: example/httprouter.fakeHandler.func1,},
+//     *{
+
+//         path: "a",
+//         indices: "b",
+//         wildChild: false,
+//         nType: static (0),
+//         priority: 2,
+//         children: []*example/httprouter.node len: 1, cap: 1, [
+//         *(*"example/httprouter.node")(0xc0000ccf50),
+//         ],
+//         handle: example/httprouter.fakeHandler.func1,},
+//     *{
+
+//         path: "�...+-2 more",
+//         indices: "��...+-4 more",
+//         wildChild: false,
+//         nType: static (0),
+//         priority: 2,
+//         children: []*example/httprouter.node len: 2, cap: 2, [
+//         *(*"example/httprouter.node")(0xc0000cd130),
+//     *(*"example/httprouter.node")(0xc0000cd180),
+//     ],
+//     handle: nil,},
+// *{
+
+//     path: "hi",
+    // indices: "",
+    // wildChild: false,
+    // nType: static (0),
+    // priority: 1,
+    // children: []*example/httprouter.node len: 0, cap: 0, nil,
+    // handle: example/httprouter.fakeHandler.func1,},
+    //  ]
+  
+    //???????????????????????????????????????
 	checkRequests(t, tree, testRequests{
 		{"/a", false, "/a", nil},
 		{"/", true, "", nil},
@@ -140,6 +237,8 @@ func TestTreeAddAndGet(t *testing.T) {
 
 	checkPriorities(t, tree)
 }
+
+
 
 func TestTreeWildcard(t *testing.T) {
 	tree := &node{}
@@ -186,6 +285,8 @@ func TestTreeWildcard(t *testing.T) {
 	checkPriorities(t, tree)
 }
 
+//捕或恐慌 -- 前去了解go异常处理 
+
 func catchPanic(testFunc func()) (recv interface{}) {
 	defer func() {
 		recv = recover()
@@ -195,11 +296,14 @@ func catchPanic(testFunc func()) (recv interface{}) {
 	return
 }
 
+//定义测试路由 
 type testRoute struct {
 	path     string
+    //路径 
 	conflict bool
+    //冲突 
 }
-
+//???????????????????????????????????????????????????
 func testRoutes(t *testing.T, routes []testRoute) {
 	tree := &node{}
 
@@ -220,6 +324,8 @@ func testRoutes(t *testing.T, routes []testRoute) {
 
 	// printChildren(tree, "")
 }
+
+// 测试通配符冲突 
 
 func TestTreeWildcardConflict(t *testing.T) {
 	routes := []testRoute{
@@ -242,6 +348,7 @@ func TestTreeWildcardConflict(t *testing.T) {
 	testRoutes(t, routes)
 }
 
+//测试 树节点冲突 
 func TestTreeChildConflict(t *testing.T) {
 	routes := []testRoute{
 		{"/cmd/vet", false},
@@ -258,6 +365,7 @@ func TestTreeChildConflict(t *testing.T) {
 	testRoutes(t, routes)
 }
 
+// 测试树重复路径 
 func TestTreeDupliatePath(t *testing.T) {
 	tree := &node{}
 
@@ -297,6 +405,7 @@ func TestTreeDupliatePath(t *testing.T) {
 	})
 }
 
+//测试空通配符 
 func TestEmptyWildcardName(t *testing.T) {
 	tree := &node{}
 
@@ -317,6 +426,7 @@ func TestEmptyWildcardName(t *testing.T) {
 	}
 }
 
+// 测试CatchALL 冲突 -- Catch 是什么概念???
 func TestTreeCatchAllConflict(t *testing.T) {
 	routes := []testRoute{
 		{"/src/*filepath/x", true},
@@ -328,6 +438,7 @@ func TestTreeCatchAllConflict(t *testing.T) {
 	testRoutes(t, routes)
 }
 
+//  测试根路径 CatchALL 冲突 
 func TestTreeCatchAllConflictRoot(t *testing.T) {
 	routes := []testRoute{
 		{"/", false},
@@ -336,12 +447,14 @@ func TestTreeCatchAllConflictRoot(t *testing.T) {
 	testRoutes(t, routes)
 }
 
+
 func TestTreeCatchMaxParams(t *testing.T) {
 	tree := &node{}
 	var route = "/cmd/*filepath"
 	tree.addRoute(route, fakeHandler(route))
 }
 
+//测试两个通配符一起用
 func TestTreeDoubleWildcard(t *testing.T) {
 	const panicMsg = "only one wildcard per path segment is allowed"
 
@@ -363,6 +476,7 @@ func TestTreeDoubleWildcard(t *testing.T) {
 		}
 	}
 }
+
 
 func TestTreeTrailingSlashRedirect(t *testing.T) {
 	tree := &node{}
@@ -631,6 +745,7 @@ func TestTreeFindCaseInsensitivePath(t *testing.T) {
 	}
 }
 
+//测试非法节点类型 
 func TestTreeInvalidNodeType(t *testing.T) {
 	const panicMsg = "invalid node type"
 
@@ -700,6 +815,7 @@ func TestTreeWildcardConflictEx(t *testing.T) {
 	}
 }
 
+//测试 
 func TestRedirectTrailingSlash(t *testing.T) {
 	var data = []struct {
 		path string
