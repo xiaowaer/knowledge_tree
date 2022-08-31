@@ -40,6 +40,7 @@ func findWildcard(path string) (wilcard string, i int, valid bool) {
 			continue
 		}
 
+
 		// Find end and check for invalid characters
 		valid = true
 		for end, c := range []byte(path[start+1:]) {
@@ -98,48 +99,61 @@ type node struct {
 // Increments priority of the given child and reorders if necessary
 //调整顺序和提高权重
 func (n *node) incrementChildPrio(pos int) int {
-
+    // 子切片
 	cs := n.children
-
+    // 儿子切片权重+1 
 	cs[pos].priority++
-
+    // 
 	prio := cs[pos].priority
-
+    //新权重值 
 	// Adjust position (move to front)
 	newPos := pos
-
+    // 
 	for ; newPos > 0 && cs[newPos-1].priority < prio; newPos-- {
-		// Swap node positions
+		
+        // Swap node positions
+        //交换节点位置,交换权重大的节点排在切片的前面的位置,
+        // 排序算法 
 		cs[newPos-1], cs[newPos] = cs[newPos], cs[newPos-1]
 	}
-
+    
 	// Build new index char string
+    // 排序过后pos就不等于 newPos了 ,newPos 在前面--了 
 	if newPos != pos { 
-
+        // 交换索引顺序,这些位操作 下标记操作不调试是真的难看 
+        // 本来 是 hc 现在索引是 ch 
 		n.indices = n.indices[:newPos] + // Unchanged prefix, might be empty
 
 			n.indices[pos:pos+1] + // The index char we move
 
 			n.indices[newPos:pos] + n.indices[pos+1:] // Rest without char at 'pos'
 	}
-
+    // 返回索引的新位置
 	return newPos
 }
+
+
 
 
 // addRoute adds a node with the given handle to the path.
 // 添加节点
 // Not concurrency-safe! 非并发安全
 // 方法,方法只能被node*类型的结构调用,是一个比package 更小的可视单位.
+
+//输入 路径 handle(web处理逻辑)
+
+//输出 
 func (n *node) addRoute(path string, handle Handle) {
 	//变量赋值
     fullPath := path
     //权重加一
 	n.priority++
 
-	// Empty tree  加入头节点 
+	// Empty tree  加入头节点,头节点用来默认的节点加上变量修改
+    // 
 	if n.path == "" && n.indices == "" {
-        //插入孩子节点 
+        //插入孩子节点
+
 		n.insertChild(path, fullPath, handle)
 		//设置节点类型 
         n.nType = root
@@ -150,32 +164,40 @@ func (n *node) addRoute(path string, handle Handle) {
 walk:
 	for {
 		// Find the longest common prefix.
+        //寻找最长公共前缀
 		// This also implies that the common prefix contains no ':' or '*'
 		// since the existing key can't contain those chars.
 		i := longestCommonPrefix(path, n.path)
-
+        
 		// Split edge
+        //路径长度 大于 最大前缀.  
 		if i < len(n.path) {
 			child := node{
 				path:      n.path[i:],
 				wildChild: n.wildChild,
 				nType:     static,
+                //原节点的索引给新的节点
 				indices:   n.indices,
+                //建立一个新节点,并且把原节点的孩子给他当儿子
 				children:  n.children,
 				handle:    n.handle,
 				priority:  n.priority - 1,
 			}
-
+            //任何新节点去当原节点的儿子.
 			n.children = []*node{&child}
 			// []byte for proper unicode char conversion, see #65
+            // 索引修改为最大前缀后的第一个字母,原节点改索引
 			n.indices = string([]byte{n.path[i]})
+            //路径修改为最大前缀,原节点改名字 
 			n.path = path[:i]
 			n.handle = nil
 			n.wildChild = false
 		}
-
+         
 		// Make new node a child of this node
+        // 新的节点
 		if i < len(path) {
+            //路径是去掉最长公共前缀的部分  
 			path = path[i:]
 
 			if n.wildChild {
@@ -203,9 +225,9 @@ walk:
 						"'")
 				}
 			}
-
+           //第一个非公共前缀字母,拿出来当索引,对应ascii 编号 
 			idxc := path[0]
-
+                
 			// '/' after param
 			if n.nType == param && idxc == '/' && len(n.children) == 1 {
 				n = n.children[0]
@@ -214,25 +236,40 @@ walk:
 			}
 
 			// Check if a child with the next path byte exists
+            //检查索引是否已经存在  
 			for i, c := range []byte(n.indices) {
 				if c == idxc {
+                    //对已经有索引的节点,只需做 提高权重的操作 
 					i = n.incrementChildPrio(i)
+                    // 节点调整为子节点,在儿子里面去插.
 					n = n.children[i]
+                    //循环继续 
 					continue walk
 				}
 			}
 
 			// Otherwise insert it
+            //不存在就插入 
 			if idxc != ':' && idxc != '*' {
+                
 				// []byte for proper unicode char conversion, see #65
-				n.indices += string([]byte{idxc})
+				//追加一个索引 
+                n.indices += string([]byte{idxc})
+                //初始化一个新的节点
 				child := &node{}
+                // 切片追加元素
 				n.children = append(n.children, child)
+                // 调整孩子权重,给某个位置的索引调整下权重 
 				n.incrementChildPrio(len(n.indices) - 1)
-				n = child
+				//当前节点移动到孩子root上 
+                n = child
 			}
+
+            //插入子节点
+
 			n.insertChild(path, fullPath, handle)
-			return
+			
+            return
 		}
 
 		// Otherwise add handle to current node
@@ -244,10 +281,15 @@ walk:
 	}
 }
 
+
+
 //插入孩子
+// 输入 路径 全路径 handle 
 func (n *node) insertChild(path, fullPath string, handle Handle) {
-	for {
+	// 循环 
+    for {
 		// Find prefix until first wildcard
+        //查找 * 和: 
 		wildcard, i, valid := findWildcard(path)
 		if i < 0 { // No wilcard found
 			break
@@ -343,6 +385,7 @@ func (n *node) insertChild(path, fullPath string, handle Handle) {
 
 		return
 	}
+ // for 循环结束 
 
 	// If no wildcard was found, simply insert the path and handle
 	n.path = path
@@ -350,15 +393,33 @@ func (n *node) insertChild(path, fullPath string, handle Handle) {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 // Returns the handle registered with the given path (key). The values of
 // wildcards are saved to a map.
+
 // If no handle can be found, a TSR (trailing slash redirect) recommendation is
 // made if a handle exists with an extra (without the) trailing slash for the
 // given path.
+//如果没有就返回 /的 handle 
+
 func (n *node) getValue(path string, params func() *Params) (handle Handle, ps *Params, tsr bool) {
+// for 循环标签控制退出
 walk: // Outer loop for walking the tree
 	for {
+        // 获取节点路径 赋值给前缀变量 
 		prefix := n.path
+        // 如果path > 前缀,不是不带符号的匹配
 		if len(path) > len(prefix) {
 			if path[:len(prefix)] == prefix {
 				path = path[len(prefix):]
@@ -418,7 +479,7 @@ walk: // Outer loop for walking the tree
 						tsr = (len(path) == end+1)
 						return
 					}
-
+                // 返回的handle 设置成节点的handle ,handle不是nil 就返回.
 					if handle = n.handle; handle != nil {
 						return
 					} else if len(n.children) == 1 {
@@ -495,6 +556,18 @@ walk: // Outer loop for walking the tree
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 // Makes a case-insensitive lookup of the given path and tries to find a handler.
 // It can optionally also fix trailing slashes.
 // It returns the case-corrected path and a bool indicating whether the lookup
@@ -520,6 +593,14 @@ func (n *node) findCaseInsensitivePath(path string, fixTrailingSlash bool) (fixe
 }
 
 
+
+
+
+
+
+
+
+
 // Shift bytes in array by n bytes left
 func shiftNRuneBytes(rb [4]byte, n int) [4]byte {
 	switch n {
@@ -535,6 +616,33 @@ func shiftNRuneBytes(rb [4]byte, n int) [4]byte {
 		return [4]byte{}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Recursive case-insensitive lookup function used by n.findCaseInsensitivePath
 func (n *node) findCaseInsensitivePathRec(path string, ciPath []byte, rb [4]byte, fixTrailingSlash bool) []byte {

@@ -54,12 +54,47 @@ func getParams() *Params {
 	return &ps
 }
 
-//检查请求???????????????????????????????????????????????????????
+//检查请求?
+
 
 func checkRequests(t *testing.T, tree *node, requests testRequests) {
-	for _, request := range requests {
-		handler, psp, _ := tree.getValue(request.path, getParams)
+// 树是第一次测试时候的那一课
 
+// *example/httprouter.node {
+// 	path: "/",
+// 	indices: "cda�h...+-2 more",
+// 	wildChild: false,
+// 	nType: root (1),
+// 	priority: 11,
+// 	children: []*example/httprouter.node len: 5, cap: 8, [
+// 		*(*"example/httprouter.node")(0xc000144e10),
+// 		*(*"example/httprouter.node")(0xc000144fa0),
+// 		*(*"example/httprouter.node")(0xc000144f00),
+// 		*(*"example/httprouter.node")(0xc0001450e0),
+// 		*(*"example/httprouter.node")(0xc000144dc0),
+// 	],
+// 	handle: nil,}
+
+
+// example/httprouter.testRequests len: 11, cap: 11, [
+// 	{
+// 		path: "/a",
+// 		nilHandler: false,
+// 		route: "/a",
+// 		ps: example/httprouter.Params len: 0, cap: 0, nil,},
+// 	{
+// 		path: "/",
+// 		nilHandler: true,
+// 		route: "",
+// 		ps: example/httprouter.Params len: 0, cap: 0, nil,},...]
+
+//for 循环 遍历 requests(结构体动态数组),取出结构request 
+	for _, request := range requests {
+        // 输入:路径 参数  
+        // 输出: (handle Handle, ps *Params, tsr bool)
+        // for 循环标签控制退出
+		handler, psp, _ := tree.getValue(request.path, getParams)
+        
 		switch {
 		case handler == nil:
 			if !request.nilHandler {
@@ -108,11 +143,10 @@ func checkPriorities(t *testing.T, n *node) uint32 {
 			n.path, n.priority, prio,
 		)
 	}
-    //返回局部计算值  
 	return prio
 } 
 
-// 计算通配符数量 
+// 
 func TestCountParams(t *testing.T) {
 	if countParams("/path/:param1/static/*catch-all") != 2 {
 		t.Fail()
@@ -121,7 +155,7 @@ func TestCountParams(t *testing.T) {
 		t.Fail()
 	}
 }
-
+//测试 基数树add和Get
 func TestTreeAddAndGet(t *testing.T) {
 
 // *example/httprouter.node {
@@ -155,6 +189,7 @@ func TestTreeAddAndGet(t *testing.T) {
 
 	for _, route := range routes {
         //路由分片取出值,和假handler方法(mock) 加入到树中.
+
 		tree.addRoute(route, fakeHandler(route))
 
 	}
@@ -219,8 +254,7 @@ func TestTreeAddAndGet(t *testing.T) {
     // children: []*example/httprouter.node len: 0, cap: 0, nil,
     // handle: example/httprouter.fakeHandler.func1,},
     //  ]
-  
-    //???????????????????????????????????????
+  //路径 nilhandler route params 
 	checkRequests(t, tree, testRequests{
 		{"/a", false, "/a", nil},
 		{"/", true, "", nil},
@@ -237,8 +271,6 @@ func TestTreeAddAndGet(t *testing.T) {
 
 	checkPriorities(t, tree)
 }
-
-
 
 func TestTreeWildcard(t *testing.T) {
 	tree := &node{}
@@ -285,8 +317,6 @@ func TestTreeWildcard(t *testing.T) {
 	checkPriorities(t, tree)
 }
 
-//捕或恐慌 -- 前去了解go异常处理 
-
 func catchPanic(testFunc func()) (recv interface{}) {
 	defer func() {
 		recv = recover()
@@ -296,14 +326,11 @@ func catchPanic(testFunc func()) (recv interface{}) {
 	return
 }
 
-//定义测试路由 
 type testRoute struct {
 	path     string
-    //路径 
 	conflict bool
-    //冲突 
 }
-//???????????????????????????????????????????????????
+
 func testRoutes(t *testing.T, routes []testRoute) {
 	tree := &node{}
 
@@ -324,8 +351,6 @@ func testRoutes(t *testing.T, routes []testRoute) {
 
 	// printChildren(tree, "")
 }
-
-// 测试通配符冲突 
 
 func TestTreeWildcardConflict(t *testing.T) {
 	routes := []testRoute{
@@ -348,7 +373,6 @@ func TestTreeWildcardConflict(t *testing.T) {
 	testRoutes(t, routes)
 }
 
-//测试 树节点冲突 
 func TestTreeChildConflict(t *testing.T) {
 	routes := []testRoute{
 		{"/cmd/vet", false},
@@ -365,7 +389,6 @@ func TestTreeChildConflict(t *testing.T) {
 	testRoutes(t, routes)
 }
 
-// 测试树重复路径 
 func TestTreeDupliatePath(t *testing.T) {
 	tree := &node{}
 
@@ -405,7 +428,6 @@ func TestTreeDupliatePath(t *testing.T) {
 	})
 }
 
-//测试空通配符 
 func TestEmptyWildcardName(t *testing.T) {
 	tree := &node{}
 
@@ -426,7 +448,6 @@ func TestEmptyWildcardName(t *testing.T) {
 	}
 }
 
-// 测试CatchALL 冲突 -- Catch 是什么概念???
 func TestTreeCatchAllConflict(t *testing.T) {
 	routes := []testRoute{
 		{"/src/*filepath/x", true},
@@ -438,7 +459,6 @@ func TestTreeCatchAllConflict(t *testing.T) {
 	testRoutes(t, routes)
 }
 
-//  测试根路径 CatchALL 冲突 
 func TestTreeCatchAllConflictRoot(t *testing.T) {
 	routes := []testRoute{
 		{"/", false},
@@ -447,14 +467,12 @@ func TestTreeCatchAllConflictRoot(t *testing.T) {
 	testRoutes(t, routes)
 }
 
-
 func TestTreeCatchMaxParams(t *testing.T) {
 	tree := &node{}
 	var route = "/cmd/*filepath"
 	tree.addRoute(route, fakeHandler(route))
 }
 
-//测试两个通配符一起用
 func TestTreeDoubleWildcard(t *testing.T) {
 	const panicMsg = "only one wildcard per path segment is allowed"
 
@@ -476,7 +494,6 @@ func TestTreeDoubleWildcard(t *testing.T) {
 		}
 	}
 }
-
 
 func TestTreeTrailingSlashRedirect(t *testing.T) {
 	tree := &node{}
@@ -745,7 +762,6 @@ func TestTreeFindCaseInsensitivePath(t *testing.T) {
 	}
 }
 
-//测试非法节点类型 
 func TestTreeInvalidNodeType(t *testing.T) {
 	const panicMsg = "invalid node type"
 
@@ -815,7 +831,6 @@ func TestTreeWildcardConflictEx(t *testing.T) {
 	}
 }
 
-//测试 
 func TestRedirectTrailingSlash(t *testing.T) {
 	var data = []struct {
 		path string

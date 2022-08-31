@@ -10,12 +10,15 @@ import (
 	"testing"
 )
 
+// 定义一个结构体 ,包含两个string 路径和结果
 type cleanPathTest struct {
 	path, result string
 }
 
+//申请一个 cleanPathTest 类型的切片 
 var cleanTests = []cleanPathTest{
 	// Already clean
+    // 已经清洁过的路径和结果 
 	{"/", "/"},
 	{"/abc", "/abc"},
 	{"/a/b/c", "/a/b/c"},
@@ -23,6 +26,7 @@ var cleanTests = []cleanPathTest{
 	{"/a/b/c/", "/a/b/c/"},
 
 	// missing root
+    // 不带root的路径和结果, 会补全一个/ 
 	{"", "/"},
 	{"a/", "/a/"},
 	{"abc", "/abc"},
@@ -30,6 +34,7 @@ var cleanTests = []cleanPathTest{
 	{"a/b/c", "/a/b/c"},
 
 	// Remove doubled slash
+    // 移除双 // -> / 
 	{"//", "/"},
 	{"/abc//", "/abc/"},
 	{"/abc/def//", "/abc/def/"},
@@ -40,6 +45,7 @@ var cleanTests = []cleanPathTest{
 	{"//abc//", "/abc/"},
 
 	// Remove . elements
+    // 移除 . 元素 
 	{".", "/"},
 	{"./", "/"},
 	{"/abc/./def", "/abc/def"},
@@ -47,6 +53,7 @@ var cleanTests = []cleanPathTest{
 	{"/abc/.", "/abc/"},
 
 	// Remove .. elements
+    // 移除 .. 元素  ,这个有点智能,它会计算相对路径 
 	{"..", "/"},
 	{"../", "/"},
 	{"../../", "/"},
@@ -61,21 +68,28 @@ var cleanTests = []cleanPathTest{
 	{"/abc/def/../../../ghi/jkl/../../../mno", "/mno"},
 
 	// Combinations
+    //  综合处理 
 	{"abc/./../def", "/def"},
 	{"abc//./../def", "/def"},
 	{"abc/../../././../def", "/def"},
 }
 
 func TestPathClean(t *testing.T) {
+     // 循环拿出测试数组 中的路径值 
 	for _, test := range cleanTests {
+        // 把 [大写开头包内权限]CleanPath中的返回值给s 
+        //看s是否符合预期,不符合就报错 
 		if s := CleanPath(test.path); s != test.result {
 			t.Errorf("CleanPath(%q) = %q, want %q", test.path, s, test.result)
 		}
+        // 结果清洁后是否等于 预期结果 ,不符合就报错 
 		if s := CleanPath(test.result); s != test.result {
 			t.Errorf("CleanPath(%q) = %q, want %q", test.result, s, test.result)
 		}
 	}
 }
+//这个cleanpath的函数看完测试我们就懂它要做什么了...
+
 
 func TestPathCleanMallocs(t *testing.T) {
 	if testing.Short() {

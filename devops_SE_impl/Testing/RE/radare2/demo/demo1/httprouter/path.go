@@ -18,18 +18,23 @@ package httprouter
 //	   that is, replace "/.." by "/" at the beginning of a path.
 //
 // If the result of this process is an empty string, "/" is returned
+// 这一段是讲刚刚那几种清洁路径的方式
+
 func CleanPath(p string) string {
+    // 一个 值为128 的常量 
 	const stackBufSize = 128
 
 	// Turn empty string into "/"
+    // 空返回 /
 	if p == "" {
 		return "/"
 	}
 
 	// Reasonably sized buffer on stack to avoid allocations in the common case.
 	// If a larger buffer is required, it gets allocated dynamically.
+    //分配一个长度为128的字节数组 
 	buf := make([]byte, 0, stackBufSize)
-
+    //输入字符串计数 
 	n := len(p)
 
 	// Invariants:
@@ -39,6 +44,7 @@ func CleanPath(p string) string {
 	// path must start with '/'
 	r := 1
 	w := 1
+    // path 必须用 / 开头 没/ 就补 
 
 	if p[0] != '/' {
 		r = 0
@@ -51,18 +57,20 @@ func CleanPath(p string) string {
 		buf[0] = '/'
 	}
 
-	trailing := n > 1 && p[n-1] == '/'
+    //好像有点看不懂, trailing 是一个bool 
+	trailing := n > 1 && p[n-1] == '/' 
 
 	// A bit more clunky without a 'lazybuf' like the path package, but the loop
 	// gets completely inlined (bufApp calls).
 	// So in contrast to the path package this loop has no expensive function
 	// calls (except make, if needed).
-
+   
+    // 如果 path 长度大于 读游标 
 	for r < n {
 		switch {
 		case p[r] == '/':
 			// empty path element, trailing slash is added after the end
-			r++
+			r++ 
 
 		case p[r] == '.' && r+1 == n:
 			trailing = true
@@ -94,12 +102,14 @@ func CleanPath(p string) string {
 		default:
 			// Real path element.
 			// Add slash if needed
+
 			if w > 1 {
 				bufApp(&buf, p, w, '/')
 				w++
 			}
 
 			// Copy element
+        
 			for r < n && p[r] != '/' {
 				bufApp(&buf, p, w, p[r])
 				w++
@@ -109,6 +119,7 @@ func CleanPath(p string) string {
 	}
 
 	// Re-append trailing slash
+    // 重新追加 结尾/ 
 	if trailing && w > 1 {
 		bufApp(&buf, p, w, '/')
 		w++
@@ -117,16 +128,22 @@ func CleanPath(p string) string {
 	// If the original string was not modified (or only shortened at the end),
 	// return the respective substring of the original string.
 	// Otherwise return a new string from the buffer.
+    // 不需要要调整的直接返回原path 
 	if len(buf) == 0 {
 		return p[:w]
 	}
+    //需要调整的就返回 buf算好的新字符串 
 	return string(buf[:w])
 }
 
+
 // Internal helper to lazily create a buffer if necessary.
 // Calls to this function get inlined.
+//构造buf 
 func bufApp(buf *[]byte, s string, w int, c byte) {
-	b := *buf
+	//地址给b
+    b := *buf
+ 
 	if len(b) == 0 {
 		// No modification of the original string so far.
 		// If the next character is the same as in the original string, we do
