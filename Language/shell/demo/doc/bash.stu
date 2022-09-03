@@ -1,0 +1,51 @@
+//格式相关
+    1.LFS内置变量的用法:
+        目的:循环遍历内容的使用,打印成一行,而不是几行输出
+    https://kodango.com/understand-ifs
+
+//参数相关
+
+  $# 是传给脚本的参数个数
+  $0 是脚本本身的名字
+  $1是传递给该shell脚本的第一个参数
+  $2是传递给该shell脚本的第二个参数
+  $@ 是传给脚本的所有参数的列表
+  
+//文件和目录相关的选项
+
+    -e filename 如果 filename存在，则为真
+    -d filename 如果 filename为目录，则为真
+    -f filename 如果 filename为常规文件，则为真
+    -L filename 如果 filename为符号链接，则为真
+    -r filename 如果 filename可读，则为真
+    -w filename 如果 filename可写，则为真
+    -x filename 如果 filename可执行，则为真
+    -s filename 如果文件长度不为0，则为真
+    -h filename 如果文件是软链接，则为真
+    filename1 -nt filename2 如果 filename1比 filename2新，则为真。
+    filename1 -ot filename2 如果 filename1比 filename2旧，则为真。
+    -eq 等于
+    -ne 不等于
+    -gt 大于
+    -ge 大于等于
+    -lt 小于
+    -le 小于等于
+    
+        怎么学shell? 
+        
+        为什么shell难学?
+            1.对调用的linux命令不熟悉
+            2.命令和shell 语法结构混在一起
+            3.变量值,不好看出来是什么
+
+
+            解决方案:
+                1.要先明白那些是shell 语法
+                2.要想明白怎么调试shell
+
+        怎么调试shell程序?
+            基本上都是echo 打印变量,好像也没有什么太爽的调试方式.
+
+
+            
+

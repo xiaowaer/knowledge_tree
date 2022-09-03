@@ -386,7 +386,6 @@ func (n *node) insertChild(path, fullPath string, handle Handle) {
 		return
 	}
  // for 循环结束 
-
 	// If no wildcard was found, simply insert the path and handle
 	n.path = path
 	n.handle = handle
@@ -417,9 +416,10 @@ func (n *node) getValue(path string, params func() *Params) (handle Handle, ps *
 // for 循环标签控制退出
 walk: // Outer loop for walking the tree
 	for {
-        // 获取节点路径 赋值给前缀变量 
+        // 把树的当前节点的路径作为前缀  
 		prefix := n.path
-        // 如果path > 前缀,不是不带符号的匹配
+        // 如果输入路径 > 前缀
+        // 路径名就把前缀砍掉
 		if len(path) > len(prefix) {
 			if path[:len(prefix)] == prefix {
 				path = path[len(prefix):]
@@ -427,15 +427,21 @@ walk: // Outer loop for walking the tree
 				// If this node does not have a wildcard (param or catchAll)
 				// child, we can just look up the next child node and continue
 				// to walk down the tree
+                //不是通配符号节点 
 				if !n.wildChild {
+                    //索引赋值 
 					idxc := path[0]
+                    //查找索引 
 					for i, c := range []byte(n.indices) {
-						if c == idxc {
+						if c == idxc { 
+                        //找到就把当前节点重置为对应索引的孩子节点上
+                        //跳转到walk处继续开始循环
 							n = n.children[i]
 							continue walk
 						}
 					}
-
+                    
+                     //找不到索引的路径可以给它 与/节点匹配的handler方法 
 					// Nothing found.
 					// We can recommend to redirect to the same URL without a
 					// trailing slash if a leaf exists for that path.
@@ -514,6 +520,7 @@ walk: // Outer loop for walking the tree
 				}
 			}
 		} else if path == prefix {
+            // 路径等于前缀 , 返回树中对应的节点的handle 
 			// We should have reached the node containing the handle.
 			// Check if this node has a handle registered.
 			if handle = n.handle; handle != nil {
