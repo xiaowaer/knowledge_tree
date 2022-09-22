@@ -1,0 +1,13 @@
+ 1.go 语言中package 代表了什么?
+        package下面有一堆函数.
+        
+    package 下面有什么语法单位?
+        package
+        import
+        func
+        type    
+            struct
+            interface
+        const
+        
+
