@@ -34,7 +34,7 @@
                 2.1  明白什么是好的可读代码
                 2.2  明白哪些东西需要读，哪些东西不需要了解
                 2.3  明白怎么抄代码，并且能保持作者的精神和风格
-    
+
     好的面向过程程序设计语言是怎么样的？
             能帮助我们去思考怎么简化问题，怎么用简单的语言来描述问题的就是好语言。
 
@@ -98,6 +98,41 @@
             2.  看清各种不同种类的过程会产生什么样的计算过程。
             3.  只有在掌握了这种技能之后，我们才能学会如何构造出可靠的程序，使之能够表现出所需要的行为。
 
+        什么是函数是一等公民的思想?
+            函数：描述了具有普遍性的思想的表述。
+            复合过程/函数: 函数只是我们将分工分块的表述方式。
+            程序员，要想办法提取出函数的公共部分(看看别人有没有好的算法实现)
+            
+            一般而言，程序设计语言总会会计算元素的可能使用方式强加上某些限制。带有最少限制的元素
+            被称为具有第一级的状态。/也就是一等公民。
+
+            一等公民的权利：
+                1.可用于变量命名
+                2.可以作为过程的参数
+                3.可以作为过程的结果返回
+                4.可以包含在数据结构中
+     
+     &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&抽象&&&&&&&&&&&&&&&&& 
+        
+        抽象的意义:
+             .1  建立最基本的概念的抽象后，留给后人一条跟着我发展的道路。
+             .2  
+        
+        过程抽象:
+            通过把过程作为参数的高阶函数用法，把函数的特征部分用lambda表达式封装起来，
+            用的时候把它作为实际参数传递即可。
+        
+        数据抽象:
+            怎么自定义一个复合数据对象，该数据对象怎么由更基本的数据对象构造起来的细节隔离开?
+                1.设法构造出一些使用复合数据对象的程序，并且暴露一些数据操作的原子过程。
+                2.起码包括内部数据的获取 和 数据对象的创建函数。
+
+            数据抽象将如何使我们能在程序的不同部分之间建立起适当的抽象屏障。
+            
+            一般而言，数据抽象的基本思想就是每一类数据对象标识出一组操作。
+
+                
+             
 ----------------------------------------------------------------------------------------------------
 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&正文&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 -------------------------------------------第一章  构造过程抽象-------------------------------------------
@@ -487,21 +522,583 @@
             
             一般而言，lambda用与define 同样的方式创建过程,除了不为有关过程提供名字之外：
             (lambda (<formal-parameters>) <body>)
+            
+                lambda表达式可用作组合式的运算符，例如:
+                     ((lambda (x y z) (+ x y (square z)))1 2 3 ) ==>12
+
+                用let创建局部变量 
+                    lambda 的另一个应用是创建局部变量。在一个过程里，除了使用那些已经约束为过程参数的变量外，
+                    我们还需要局部变量。
+
+                    f(x,y) = x(1+xy)^2 +y(1-y)+(1+xy)(1-y)
+                        可以将它表达为
+                            a= 1+xy
+                            b= 1-y
+                            f(x，y)=xa^2+yb+ab
+
+                        ----------------------------
+                    
+                    表达方式一:
+                        (define (f x y)
+                            (define (f-helper a b)
+                                (+ (* x (square a))
+                                    (* y b)
+                                    (* a b)))
+                        
+                            (f-helper (+ 1 (* x y)) (- 1 y))
+                        )
+    
+                    表达方式二: 可以用一个lambda 表达式，用以描述约束局部变量的匿名过程。  
+                        (define (f x y)
+                            ((lambda a b)
+                                (+ (* x (square a))
+                                    (* y b)
+                                    (* a b))
+                             (+ 1 (* x y))
+                             (- 1 y))         
+                       )
+
+                   表达方式三: 这一结构非常有用，因此，语言里有一个专门的特殊形式称为let,使这种编程方式更为方便。
+                   利用let，过程f可以写为:
+                        (define (f x y)
+                            (let (
+                                 (a (+ 1 (* x y )))
+                                 (b (- 1 y))
+                                 )
+                                (+ (* x (square a))
+                                    (* y b)
+                                    (* a b))
+                       )
+
+                let 表达式的一般形式:
+                    (let ((<var1> <exp1>))
+                        。。。
+                    <body>
+                    )
+
+            let 可以看作是 lambda 表达式的语法糖，表达式二和三等价，解释器不需要为局部变量添加任何新机制。
+        
+
+        1.3.3 过程作为一般性的方法:
+            
+            demo1: 找出函数零点 
+                原理: 通过区间折半寻找方程的根:
+                    f是一个连续的函数，f(x)=0 是函数的根
+                    这种方法的基本思想是:
+                        如果f(a)<f(b),那么a 和 b 之间必定有一个零点。
+                        然后 不断逼近结果。
+
+                代码实现:
+                    (define (search f neg-point pos-point)
+                        (let(( midpoint (average neg-point posint)))
+                            (if (close-enough? nes-point pos-point)
+                                midpoint
+                                (let((test-value (f midpoint)))
+                                ... 这种实例没有意义，我对数学业务不敢兴趣。
+                            )
+                    )
+                //数学问题，我们不敢兴趣，而且没时间研究数学。
+                  
+        1.3.4 过程作为返回值: 函数可以作为返回值。
+   
+   ------------------------------------------第二章：构造数据抽象--------------------------------------
+        
+     lisp 提供那些原生的数据对象组合技术?
+
+     怎么去构造出根本没有任何特定 "数据"操作？
+
+     只是由过程形成的复合数据，是怎么样的?
+
+     序列和树的一些常规技术？
+
+     闭包的概念？
+
+     闭包的应用？
+
+        
+        2.1 数据抽象导引
+            2.1.1 实例:有理数上的算法运算
+                作为开始，我们假定已经有了一种从分子和分母构造有理数的方法。
+                并且有一种方法取得(选出) 它的分子和分母。
+                (make-rat <n> <d>)返回一个有理数，分子是整数<n>,分母是整数<d>
+                (number <x> )    返回有理数<x >的分子
+                ( denom <x> )    返回有理数<x >的分母
+            
+            我们要在这里使用一种称为 按愿望思维的强有力的综合策略。
+
+            现在我们把分数的四则运算写成，每个运算一个过程
+                //分数加法
+                (define (add-rat x y)
+                    (make-rat( + (* (number x) (denom y))
+                                 (* (number y) (denom x)))
+                              (* (denom x) (denom  y))))
+                                        
+                // 分数减法
+                (define (sub-rat x y)
+                    (make-rat( - (* (number x) (denom y))
+                                 (* (number y) (denom x)))
+                              (* (denom x) (denom  y))))
+                
+                //分数乘法
+                (define (mul-rat x y)
+                    (make-rat (* (number x) (number  y))
+                              (* (denom x)  (denom  y))))
+
+                //分数除法
+                (define (div-rat x y)
+                    (make-rat (* (number x) (denom  y))
+                              (* (denom x)  (number  y))))
+                
+                //两个分数是否相等
+                (define (equal-rat? x y)
+                    (=   (* (number x) (denom  y))
+                         (* (number y) (denom  y))))
+                
+            序对
+                lisp 提供一种称为序对的复合结构,这种结构是通过内置的cons构造出来。
+                (define x (cons 1 2))
+                (car x) 1 
+                (cdr x) 2
+
+                请注意: 序对是可以嵌套的。
+                (define x (cons 1 2))
+                (define y (cons 3 4))
+                (define z (cons x y))
+                (car(car z)) 1 
+                (car(cdr z)) 3 
+
+            只要有了序对之后，它可以用作构造任意种类的复杂数据结构的通用的基本构件。
+                从序对构造起来的数据对象称为表结构数据。
+                
+                有理数的表示
+                    (define (make-rat n d) (cons n d))
+                    (define (number x) (car x))
+                    (define (denom x) (cdr x))
+
+                (define (print-rat x)
+                    (newline)
+                    (display (number x))
+                    (display "/")
+                    (display (denom x)))
+                
+                现在就可以试验 我们的有理数过程来:
+                
+                    (define one-half (make-rat 1 2))
+                    (print-rat one-half) 1/2
+
+                    (define one-third (make-rat 1 3))
+                    (print-rat (add-rat one-half one-third))  5/6
+                    (print-rat (mul-rat one-half one-third))  1/6 
+                    (print-rat (add-rat one-third one-third)) 6/9
+                        
+                    (define (make-rat n d)
+                        (let ((g (gcd  n d)))
+                            (cons (/ n g) (/ d g))))
+
+                     (print-rat (add-rat one-third one-third)) 2/3
+                    
+            2.1.2 抽象屏障
+                
+                形象化地表示了有理数系统的结构。其中水平先表示抽象屏障，它们隔离了系统中不同的层次。
+            
+                层次隔离的是什么？
+                    隔离了使用 和 实现。
+
+                举个有理数系统的例子:
+                    我们把有理数的计算功能包,作为公共包给大家开放使用, 
+                                
+                        ———————————————————使用有理数的程序———————————————————————
+                            用户自定义的自由发挥的一层 ：有个运算，要用加法，又要用减法                   
+    
+                        ————————————————————问题域中的有理数—————————————————————
+                            领域抽象操作：add-rat  sub-rat
+
+                        ———————————————————作为分子和分母的有理数————————————————
+                            数据抽象第一层：make-rat   numer denom                            
+
+                        ———————————————————————作为序对的有理数——————————————————
+                            lisp底层的复合数据结构实现： cons car cdr
+
+                基于层次做抽象隔离的优点:
+                    1.  第一个优点：这样的程序容易维护和修改.
+                    2.  任一一种比较复杂的数据结构，
+                        都可以以多种不同的方式用程序设计语言提供的基本数据结构表示。
+                        (底层数据结构，留给后人修改的空间，也许我做的不是很好，但是我留个口子让别人修改)
+                        (至少我在数据抽象层/领域抽象层的贡献还是有意义的)
+                    
+            2.1.3 数据意味着什么？
+                数据是什么? 
+                    数据只是想java 中bean的存在(由给定的构造函数和选择函数)。
+
+                数据bean能通过过程实现吗 ？
+                    (define (cons x y)
+                        (define (dispatch m)
+                            (cond ((= m 0) x)
+                                  ((= m 1) y)
+                                  (else (error "Argument not 0 or 1 -- CONS" m))))
+                        dispatch
+                        )
+                    
+                    (define (car z) (z 0))
+                    (define (cdr z) (z 1))
+
+                    --本质：参数状态保存在过程中。
+
+                这样用的话，程序的很多状态都在过程里面，但是这里少了一个持久化状态的使用。
+
+               --这个模式看上去很好玩，但实际上，数据的过程性表示将在我们的程序设计宝库里扮演一种核心角色，
+               这种有关的程序设计风格通常称为消息传递。
+                    (消息传递可以用它作为建模的基本工具)
+
+             2.2 层次性数据和闭包性质:
+                一般说，某种组合数据对象的操作满足闭包性质,通过它组合起数据对象得到的结果本身还可以通过同样的操作再进行组合。
+                闭包就像指针链
+                有了闭包我们可以建立起层次行的结构。
+
+                从第一章开始，我们在处理过程的问题就利用了闭包性质，而且是最本质的东西，因为除了最简单的程序外，
+                    所有程序都依赖于一个事实：
+                        组合式的成员本身还可以是组合式。
+
+
+            2.2.1 闭包会产生什么问题?
+                
+                .1 用序对来表示序列和树
+                        
+                      demo1：序列的表示：
+                            利用序对可以构造出一种常用的数据结构，序列,一批数据对象的一种有序汇集。
+
+                            将序列 1,2,3,4 表示为序对的链
+                            (cons 1 (cons 2 (cons 3 (cons 4 nil))))
+                                
+                            通过嵌套cons形成的这样的一个序对的序列成为一个表，Scheme为方便表的构造，
+                            提供了一个语法糖 
+                            list< <a1> <a2> <a3> <a4>
+
+                     demo2: 序列的使用
+                        (define one-through-four (list 1 2 3 4))
+                        one-through-four
+                        (1 2 3 4)
+
+                        不要将表达式 (list 1 2 3 4)和 表(1 2 3 4)搞混了
+
+                        (car one-through-four) 
+                            (car (cons 1 (cons 2 (cons 3 (cons 4 nil))))) 
+                            car (cons 1 ...) ==》1
+                        
+                        (cdr one-through-four) 
+                            (2 3 4) ==> 不是值，是把表的指针取出来了
+
+                        (car (cdr one-through))  ==>2
+
+                        (cons 10 one-through-four)==>(10 1 2 3 4)
+
+                        (cons 5  one-through-four)==>(5 1 2 3 4)
+
+                       demo3: 表操作
+                            利用序对将元素的序列表示为表之后,我们就可以使用常规的程序设计技术,
+                            通过"向下cdr"表的方式完成对表的各种操作。
+                            例如，下面的过程list-ref的实际参数是一个表和一个数n，它的返回这个表中的第n个项。
+
+                        这里人们习惯令表元素的编号从0开始，计算list-ref的方法如下： 
+                            对n=0，list-ref 应返回表的car。
+                            否则，list-ref 返回表的cdr的第(n-1)个项。
+
+                        //实现取出序列中的某一位
+                        (define (list-ref items n)
+                            if ( = n 0)
+                               (car items)
+                               (list-ref(cdr items)(- n 1))))
+                            
+                            (define squares (list 1 4 9 16 25))
+
+                            (list-ref squares 3)
+                               ==> 16 
+
+                        //计算序列长度
+                        (define (length items)
+                            (if (null? items)
+                                0 
+                                (+1 (length(cdr items)))))
+
+                        (define odds (list 1 3 5 7))
+                        (length odds) ==> 4
+
+                        // 迭代法计算长度
+                            (define (length items)
+                                (define  (length-iter a count)
+                                (if (null? a)
+                                    counte
+                                    (length-iter (cdr a) (+ 1 count))))
+                            (length-iter items 0))
+
+                        //另一种常用程序设计技术是在向下cdr一个表的过程中"向上cons"出结果表，
+                        例如 append：
+                            (define (append list1 list2)
+                                if( null? list1)
+                                list2 
+                                (cons (car list1) (append (cdr list1) list2))))
+                            
+                            // 如果list1是空表，结果就是list2
+                            //否则应先做出list1和cdr和list2的append，而后在将list1的car通过cons加到前面
+
+                            //有点恶心的写法，左边一个个追加，右边不动，直接连上去。
+
+                    .2 对表的映射 map
+                        一个特别有用的操作是将某种应用于一个表的所有元素，得到所有结果构成的表。
+                        
+                        demo1：
+                        
+                           (define (scale-list items factor)
+                                (if (null？items)
+                                    nil 
+                                    (cons (* (car items) factor)
+                                          (scale-list (cdr items) factor))
+                                )
+                            )
+                            ==》对表中的每一个元素进行遍历操作。
+                            
+                          (scale-list (list 1 2 3 4 5) 10) ==> (10 20 30 40 50) 
+
+                    demo2:
+                        我们可以抽象出具有一般性的想法,将其中的公共模式表述为一个高阶过程，
+                        
+                        ( define (map proc items)
+                            (if (null？ items)
+                                nil
+                                (cons (proc (car items))
+                                      (map proc (cdr items)))
+                                )
+                        )
+                        
+                        (map abs (list  -10 2.5 -11.6 17))
+                        (10 2.5 11.6 17)
+
+                        (map (lambda (x)  (* x x))
+                             (list 1 2 3 4))
+                        ==> (1 4 9 16)
+
+                     现在我们可以用map给出scale-list 的一个新定义：
+                        (define (scale-list items factors)
+                            (map (lambda (x) (* x factor))
+                            items ))
+                        
+                    map 是一种很重要的结构，他可以代表一直公共模式，它建立一种处理表的高层抽象。
+                    map帮我们建立了一层抽象屏障，实现表变换的过程的实现，与如何提取表中元素以及组合结果
+                    的细节隔离开。
+
+        2.2.2 层次性结构:
+            将表作为序列的表示方式，可以很自然地推广到元素本身也是序列。
+            如：
+                (cons  (list 1 2) (list 3 4)) ==》 ((1 2) 3 4)
+            
+            识别这种元算本身也是序列的序列的另一种方式,是把它们看作树。 
+            序列里的元算就是树的分支，本身也是序列的元素就形成树中的子树。
+
+                递归是处理树的基本工具。
+                我们通常把对于树的操作归结为对它们分支的操作，
+                再将这种欧冠你操作归结为对分支的分支的操作，
+                直到到了叶子结点为止。
+
+           (define x (cons (list 1 2) (list 3 4)))
+           
+                (length x) ==>3 
+                (count-leaves x) ==> 4 
+            
+                (list x x)
+                ==>(((1 2)3 4)  ((1 2) 3 4)))
+                
+                (length (list x x)) ==>2 
+
+                (count-leaves (list x x)) ==>8
+
+                (define (count-leaves x)
+                    (cond ((null? x) 0)
+                          ((not (pair? x)) 1)
+                          (else (+ (count-leaves (car x))
+                                    (count-leaves (cdr x)))))
+                )
+
+            
+            2.2.3 序列作为一种约定的界面:
+                技巧一：.用lambda表达式作为参数，加上使用抽象的复合数据结构，
+                         加上迭代整合到一起的代码，能使程序能够保持很好的弹性。
+
+                技巧二:
+                    使用约定的界面:
+                        让我们先看两段程序：
+                            proc1:
+                               //以一颗树作为参数，计算出那些值的奇数的叶子的平方和
+
+                               //枚举出一颗树的树叶
+                               // 过滤它们，选出其中的奇数
+                               //对选出的每一个数求平方
+                               //用+累积起得到的结果，从0开始
+
+                               (define (sum-odd-squares tree)
+                                    (cond (( null？ tree) 0)
+                                         ((not (pair? tree))
+                                            (if (odd？tree) (square tree) 0))
+                                            (else (+ (sum-odd-squares (car tree))
+                                                     (sum-odd-squares (cdr tree)))))
+                                )
+
+                                过程可以链式的黑盒子处理：
+                                     sum-odd-squares,我们从一个枚举器开始
+                                    enumerate(枚举器) -- (产生给定树的所有树叶节点) -->
+                                       filter(过滤器)--(odd? 不是奇数就过滤掉)-->
+                                          map(映射器)--(转换装置)-->它将square应用于每个元素
+                                   accumulate(累积器)--(该装置用+将得到的所有元素组合起来)
+                            
+                            proc2：
+                                // 枚举从0到n的整数
+                                //对每个整数计算相应的fib数
+                                // 过滤它们，选出其中的偶数
+                                // 用cons 累积得到的结果，从空表开始
+
+                            (define (even-fibs n)
+                                (define (next k)
+                                (if (> k n)
+                                    nil
+                                    (let ((f (fib k)))
+                                        (if (even? f)
+                                            (cons f(next  (+ k 1)))
+                                            (next (+ k1))))))
+                                (next 0))
+                                
+                    序列操作:
+                        怎么把过程做拆分，关注"信号" 流向。
+                        (map square(list 1 2 3 4 5))
+                            --(1 4 9 16 25)
+                        
+                        过滤一个序列，也就是选出其中满足某个给定谓词的元素，可以按下面方式做:
+                            (define (filter predicate sequence)
+                                (cond ((null? sequence) nil)
+                                 (( predicate(car sequence))
+                                    (cons (car sequence)
+                                           (filter predicate (cdr sequence))))
+                                            (else (filter predicate(cdr sequence)))))
+                        
+                        例如: (filter odd? (list 1 2 3 4 5))
+                              (1 3 5)
+                        
+                              累积工作可以实现如下:
+                               (define (accumulate op initial sequence)
+                                    (if(null? sequence)
+                                       initial
+                                       (op (car sequence)
+                                            (accumulate op initial (cdr sequence))))
+                               )
+                        
+                             (accumulate + 0 (list 1 2 3 4 5)) ==>15
+                             (accumulate * 1 (list 1 2 3 4 5)) ==> 120
+                             (accumulate cons nil (list 1 2 3 4 5)) ==>(1 2 3 4 5)
+
+                                 (define (sum-odd-squares tree)
+                                    (accumulate + 0 (map square
+                                                        (filter odd?
+                                                            (enumerate-tree tree))))
+                                 )
+
+                                 (define (even-fibs n)
+                                     (accumulate cons
+                                            nil
+                                            (filter even? 
+                                                (map fib 
+                                                    (enumerate-initial 0 n))
+                                        )
+                                 ))
+                            
+                        链式调用帮助我们得到模块化代码,推动部件的封装。
+                        很多模块是标准化的，有的有框架，有的是库。
+                            (define (salary-of-highest-paid-programer records)
+                                (accumulate max
+                                             0
+                                             (map salary 
+                                                (filter programer? records)
+                                             )
+                                )
+                            )
+
+                嵌套映射:
+                    (计算有点难)
+
+                实例: 一个图形语言
+                    
+                    
+
+
+
                 
 
 
-
-
-
-            
     
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+
+                .2 如何以某种生动的形式显示闭包的图形语言
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+    
+    
+                
+                    
+
         
-
-
-------------------------------------------构造数据抽象------------------------------------------------------------
-
-
-
